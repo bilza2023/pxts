@@ -1,0 +1,81 @@
+{
+    "frames": {
+        "walk_01.png": {
+            "frame": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_02.png": {
+            "frame": { "x": 187, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_03.png": {
+            "frame": { "x": 374, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_04.png": {
+            "frame": { "x": 561, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_05.png": {
+            "frame": { "x": 748, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_06.png": {
+            "frame": { "x": 935, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_07.png": {
+            "frame": { "x": 1122, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        },
+        "walk_08.png": {
+            "frame": { "x": 1309, "y": 0, "w": 187, "h": 324 },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": { "x": 0, "y": 0, "w": 187, "h": 324 },
+            "sourceSize": { "w": 187, "h": 324 }
+        }
+    },
+    "animations": {
+        "walk": [
+            "walk_01.png",
+            "walk_02.png",
+            "walk_03.png",
+            "walk_04.png",
+            "walk_05.png",
+            "walk_06.png",
+            "walk_07.png",
+            "walk_08.png"
+        ]
+    },
+    "meta": {
+        "app": "https://www.codeandweb.com/texturepacker",
+        "version": "1.0",
+        "image": "capGuy.png",
+        "format": "RGBA8888",
+        "size": { "w": 1496, "h": 324 },
+        "scale": "1",
+        "smartupdate": "$TexturePacker:SmartUpdate:3f60cdaaf5a0a3aef9e7d543cd37beaf:c753a96492a5e00edc86f5cacd23aabd:c60087af06da1906ffeffe039fd164fe$"
+    }
+}
