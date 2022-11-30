@@ -38,7 +38,7 @@ this.commitComps(); //importantay
 private gameLoop(){        
 
 const msDelta = this.stopWatch.getMsDelta();
-// console.log("msDelta",msDelta);
+console.log("msDelta:: ",msDelta);
 
 if (msDelta > this.duration) { this.stop(); }
 /////////////////////////////////////////////////////

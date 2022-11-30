@@ -1,7 +1,7 @@
 import { DisplayObject, Graphics } from "pixi.js";
 import IDrawable from "./IDrawable";
 import {AniNumber} from "../animations/animations";
-
+import BaseGraphDb from "./baseGraphDb";
 /////////////////////////////////////////////
 export default class BaseGraph implements IDrawable {
     private graphics : Graphics;
@@ -18,23 +18,23 @@ export default class BaseGraph implements IDrawable {
     private color: number;
     
 /////////////////////////////////////////
-constructor(startTime: number,endTime: number,x :number=0,y :number=0,width :number=50,height :number=50,color :number =0xde3249) {
+constructor(baseGraphDb : BaseGraphDb) {
 
-    this.startTime = startTime;
-    this.endTime =  endTime;
-    this.canvasWidth = 800;
-    this.canvasHeight = 350;
+    this.startTime = baseGraphDb.startTime;
+    this.endTime =  baseGraphDb.endTime;
+    this.canvasWidth = baseGraphDb.canvasWidth;
+    this.canvasHeight = baseGraphDb.canvasHeight;
     this.id = Math.random().toString(36).slice(2);
-    this.x = new AniNumber();
-    this.width = width;
-    this.height = height;
-    this.color = color;
+    this.x = new AniNumber(baseGraphDb.x);
+    this.width = baseGraphDb.width;
+    this.height = baseGraphDb.height;
+    this.color = baseGraphDb.color;
     // this.x;
     // this.setY(y);
 /////////////////////////////
 this.graphics = new Graphics();
 this.graphics.beginFill(this.color);
-this.graphics.drawRect(0, 0, 1, 1);
+this.graphics.drawRect(this.x.value(), 10, this.width, this.height);
 this.graphics.endFill();   
 ///////////////////
 
@@ -78,6 +78,8 @@ getDrawable():DisplayObject{
 update( timeMs :number=0 ):void {
 // const xx = this.x();
 // console.log( "timeMs" , timeMs);    
+this.x.update(timeMs);
+this.graphics.x = this.x.value();
 console.log( "this.graphics.x" , this.graphics.x);    
 // console.log( "this.x" , this.x);    
 // this.setX(xx + 0.1);
