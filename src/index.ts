@@ -9,10 +9,11 @@ const engine = new Engine();
 const comps: IDrawable[] = [];
 // const bg = new BaseGraph(0,3000);
 // comps.push(bg);
-const baseGraphDb = new BaseGraphDb(0,3000,20,20,30,100,0xf20404);
+const baseGraphDb = new BaseGraphDb(0,3000,100,100,100,100,0xf20404);
 
-baseGraphDb.x.set(10);
-baseGraphDb.x.animate(0,10,0,90);
+// baseGraphDb.x.set(10);
+// baseGraphDb.x.animate(0,10,0,90);
+// baseGraphDb.height.animate(1,10,0,90);
 
 const bg2 = new BaseGraph(baseGraphDb);
 // bg2.setX(0); 

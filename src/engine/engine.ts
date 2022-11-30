@@ -19,7 +19,7 @@ this.stopWatch = new StopWatch();
 //----------------------------
         utils.skipHello();
 this.app = new Application({ backgroundColor,width: width,
-        height: height});
+        height: height, antialias :true});
 this.app.stage.interactive = true
 this.app.renderer.backgroundColor = 0x061744; 
 //.........................................
