@@ -1,13 +1,13 @@
-import { Application , utils } from "pixi.js";
-import BaseComp from "../baseComps/baseComp";
-import IBaseComp from "../baseComps/IBaseComp";
+import { Application,Graphics, Loader, Texture, AnimatedSprite , utils } from "pixi.js";
+import BaseGraph from "../core/baseGraph";
+import IDrawable from "../core/IDrawable";
 import StopWatch from "./stopWatch";
 
 ///////////////////////////////////////////
 export default class Engine {
-stopWatch:StopWatch;
-comps : IBaseComp[];
-app :Application;
+private stopWatch:StopWatch;
+private comps : IDrawable[];
+private app :Application;
 
 ///////////////////////////
 constructor(width :number=600 , height :number=350, backgroundColor :number=0xd3d3d3){
@@ -29,9 +29,9 @@ window.onload = async (): Promise<void> => {
 // this.app.theApp.renderer.
 }
 
-addComp(comp :IBaseComp){
+addComp(comp :BaseGraph){
 this.comps.push(comp);
-const displayObject = comp.getDisplayObject();        
+const displayObject = comp.getDrawable();        
 this.app.stage.addChild(displayObject);
 }
 
@@ -43,7 +43,7 @@ stop(){
 this.stopWatch.stop(); 
 this.app.ticker.remove(   this.gameLoop , this  );
 }
-
+//--This is actually now the UPDATE function
 private gameLoop(){        
 const dt = this.stopWatch.getMsDelta();
 console.log("dt",dt);
@@ -53,7 +53,7 @@ if (dt > 3000) {
 }
 for (let i = 0; i < this.comps.length; i++) {
         const comp = this.comps[i];
-        comp.draw( dt , this.app.screen);
+        // comp.draw( dt , this.app.screen);
 }
 }
 ////////////////

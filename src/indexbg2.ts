@@ -1,7 +1,7 @@
 // import { DisplayObject, Graphics, Loader, Texture, AnimatedSprite, Sprite, utils } from "pixi.js";
 import Engine from "./engine/engine";
-import BaseCompDb from "./baseComps/baseCompDb";
-import BaseComp from "./baseComps/baseComp";
+import BaseCompDb from "./core/baseCompDb";
+import BaseComp from "./core/baseGraph";
 import "./style.css";
 
 ///////////////////////////////////////////////////
