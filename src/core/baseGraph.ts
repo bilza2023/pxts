@@ -5,7 +5,7 @@ import IDrawable from "./IDrawable"
 export default class BaseGraph  implements IDrawable{
     protected graphics : Graphics;
     public  readonly id: string;
-
+    //------
     public x            : number;
     public y            : number;
     public width        : number;
@@ -13,60 +13,89 @@ export default class BaseGraph  implements IDrawable{
     public color        : number;
     public rotation     : number;
     public opacity      : number;
+    //------
+    private pvtOffsetX      : 0|1|2;
+    private pvtOffsetY      : 0|1|2;
     
 /////////////////////////////////////////
-constructor(x :number, y :number,width :number,height :number) {
+constructor(x :number, y :number,width :number,height :number,color:number=0xffffff) {
 
     this.id = Math.random().toString(36).slice(2);
+    
     this.x = x;
     this.y = y;
     this.width =  width;
     this.height = height;
 
-    this.color =  0xffffff;
+    this.color =  color;
     
     this.rotation =  0;
     this.opacity =  100;
 /////////////////////////////
 this.graphics = new Graphics();
-// this.addPixiElement();
-///////////////////
+//--do not remove
+this.pvtOffsetX = 0;
+this.pvtOffsetY = 0;
 }
 
 public getDrawable():DisplayObject{
     return this.graphics;
 }
+//-----------------------------------------------
+align( x : 0|1|2,  y : 0|1|2=0){
+this.pvtOffsetX = x;       
+this.pvtOffsetY = y;       
+}
 
+drawX():number {   
+let x = 0;
+    switch ( this.pvtOffsetX ) 
+    {
+    case 0 :
+        x = this.x;       
+    break;
+    case 1:
+        x = this.x + ((this.width/2));    
+    break;
+    case 2:
+        x = this.x + ((this.width))
+    break;
+    }
+return x;        
+}
+drawY():number {   
+let y = 0;
+    switch ( this.pvtOffsetY ) 
+    {
+    case 0 :
+        y = this.y;       
+    break;
+    case 1:
+        y = this.y + ( (this.height/2) );    
+    break;
+    case 2:
+        y = this.y + ( (this.height) )
+    break;
+    }
+return y;        
+}
+
+//-----------------------------------------------
 public update( ):void {
-//--7 so far
+    this.graphics.width =  this.width;
+    this.graphics.height =  this.height;
+    this.graphics.angle =  this.rotation;
+    this.graphics.alpha =  this.opacity/100;
+    this.graphics.tint =  this.color;
+    
 //------------------set the rotation axis
-this.graphics.position.x = this.x + (this.width/2);
-this.graphics.position.y = this.y + (this.height/2);
-//-------------------------
-this.graphics.x =  this.x + (this.width/2);
-this.graphics.y =  this.y;
-this.graphics.width =  this.width;
-this.graphics.height =  this.height;
-this.graphics.angle =  this.rotation;
-this.graphics.alpha =  this.opacity/100;
-this.graphics.tint =  this.color;
-
-
+this.graphics.x =  this.drawX();
+this.graphics.y =  this.drawY();
+this.graphics.pivot.x = this.drawX();
+this.graphics.pivot.y = this.drawY();
 }
 
 //////////////////////////////////////////////////////////
-protected addPixiElement(){
-    // this.graphics.beginFill(this.color );
-
-    // this.graphics.drawRect(
-    //     this.x, 
-    //     this.y, 
-    //     this.width, 
-    //     this.height);
-    
-    // this.graphics.endFill();   
-}
-
-
+protected init(){}
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }
