@@ -9,14 +9,14 @@ import IDrawable from "./core/IDrawable";
  */
 
 ////////////////////////////////////////////////
-const engine = new Engine();
+const engine = new Engine(800,300);
 ////////////////////////////////////////////////
 const comps: IDrawable[] = [];
 // const bg = new BaseGraph(0,3000);
 // comps.push(bg);
-const baseGraphDb = new BaseGraphDb(0,10_000,0,0,100,100,0xf20404);
+const baseGraphDb = new BaseGraphDb(0,10_000,0,0,10,10,0xf20404);
 // baseGraphDb.rotation.animate(1,5,0,360 * 2);
-baseGraphDb.x.set( 200 );
+
 baseGraphDb.y.set( 50 );
 // baseGraphDb.x.animate(0,10,0,90);
 // baseGraphDb.height.animate(1,10,0,90);
@@ -30,5 +30,9 @@ console.log("comps",comps);
 
 engine.setComps(comps);
 engine.setDuration(60_000);
-engine.start();
-
+// engine.start();
+let xx = 0;
+setInterval( ()=>{
+    baseGraphDb.x.set( xx );
+    xx +=1;
+},100 );
