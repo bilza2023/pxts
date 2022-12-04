@@ -3,7 +3,7 @@ import IDrawable from "./IDrawable"
 /////////////////////////////////////////////
 
 export default class BaseGraph  implements IDrawable{
-    private graphics : Graphics;
+    protected graphics : Graphics;
     public  readonly id: string;
 
     public x            : number;
@@ -29,7 +29,7 @@ constructor(x :number, y :number,width :number,height :number) {
     this.opacity =  100;
 /////////////////////////////
 this.graphics = new Graphics();
-this.addPixiElement();
+// this.addPixiElement();
 ///////////////////
 }
 
@@ -39,7 +39,11 @@ public getDrawable():DisplayObject{
 
 public update( ):void {
 //--7 so far
-this.graphics.x =  this.x;
+//------------------set the rotation axis
+this.graphics.position.x = this.x + (this.width/2);
+this.graphics.position.y = this.y + (this.height/2);
+//-------------------------
+this.graphics.x =  this.x + (this.width/2);
 this.graphics.y =  this.y;
 this.graphics.width =  this.width;
 this.graphics.height =  this.height;
@@ -47,19 +51,20 @@ this.graphics.angle =  this.rotation;
 this.graphics.alpha =  this.opacity/100;
 this.graphics.tint =  this.color;
 
+
 }
 
 //////////////////////////////////////////////////////////
 protected addPixiElement(){
-    this.graphics.beginFill(this.color );
+    // this.graphics.beginFill(this.color );
 
-    this.graphics.drawRect(
-        this.x, 
-        this.y, 
-        this.width, 
-        this.height);
+    // this.graphics.drawRect(
+    //     this.x, 
+    //     this.y, 
+    //     this.width, 
+    //     this.height);
     
-    this.graphics.endFill();   
+    // this.graphics.endFill();   
 }
 
 

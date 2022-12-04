@@ -11,11 +11,11 @@ constructor(width: number = 600, height: number = 300, backgroundColor: number =
 utils.skipHello();
 
 this.app = new Application({
-    backgroundColor, width: width,
+    width: width,
     height: height, antialias: true
 });
 this.app.stage.interactive = true
-this.app.renderer.backgroundColor = 0x061744;
+this.app.renderer.backgroundColor = backgroundColor;
 //.........................................
 document.body.appendChild(this.app.view);
 /////////////////////
