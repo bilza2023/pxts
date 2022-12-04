@@ -17,6 +17,7 @@ export default class BaseGraphDb  {
     public width:   AniNumberDb;
     public height:  AniNumberDb;
     public color:   AniNumberDb;
+    public rotation:   AniNumberDb;
 
     /////////////////////////////////////////
     constructor(startTime: number, endTime: number, x: number = 0, y: number = 0, width: number = 50, height: number = 50, color: number = 0xde3249) {
@@ -31,6 +32,7 @@ export default class BaseGraphDb  {
         this.width =   new AniNumberDb(width);
         this.height =  new AniNumberDb(height);
         this.color =   new AniNumberDb(color);
+        this.rotation =   new AniNumberDb(0);
        
 ///////////////////
 }

@@ -4,20 +4,20 @@ import StopWatch from "./stopWatch";
 
 ///////////////////////////////////////////
 export default class Engine {
-
+//--These are the components which also hold the pointer to pixi.js displayObject  object
 private comps : IDrawable[];
 private app :Application;
 private stopWatch:StopWatch;
 private duration:number;
 ///////////////////////////
 
-constructor(width :number=600 , height :number=350, backgroundColor :number=0xd3d3d3){
+constructor(width :number=600 , height :number=300, backgroundColor :number=0xd3d3d3){
 //----------------------------
 this.comps = [];
 this.duration = 60_000;
 this.stopWatch = new StopWatch();
 //----------------------------
-        utils.skipHello();
+utils.skipHello();
 this.app = new Application({ backgroundColor,width: width,
         height: height, antialias :true});
 this.app.stage.interactive = true
@@ -32,9 +32,36 @@ window.onload = async (): Promise<void> => {
 //----------------------------
 this.commitComps(); //importantay
 }
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+////////////-------- Public API------/////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+public start(){
+this.stopWatch.start(); 
+this.app.ticker.add(    this.gameLoop, this   );
+}
+public stop(){
+this.stopWatch.stop(); 
+this.app.ticker.remove(   this.gameLoop , this  );
+}
+
+public setComps(comps:IDrawable[]=[]){
+this.comps = comps;
+this.commitComps();
+}
+
+public setDuration(durationMilliSec : number){
+this.duration = durationMilliSec;
+}
 
 
-//--This is actually now the UPDATE function
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+////////////-------- Private API------////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 private gameLoop(){        
 
 const msDelta = this.stopWatch.getMsDelta();
@@ -48,32 +75,12 @@ for (let i = 0; i < this.comps.length; i++) {
         }
 }
 ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////
-start(){
-this.stopWatch.start(); 
-this.app.ticker.add(    this.gameLoop, this   );
-}
-stop(){
-this.stopWatch.stop(); 
-this.app.ticker.remove(   this.gameLoop , this  );
-}
-
-setComps(comps:IDrawable[]=[]){
-this.comps = comps;
-this.commitComps();
-}
-
-setDuration(durationMilliSec : number){
-this.duration = durationMilliSec;
-}
-
 private commitComps(){
         for (let i = 0; i < this.comps.length; i++) {
                 const comp = this.comps[i];
                 comp.canvasWidth = this.app.renderer.width;
                 comp.canvasHeight = this.app.renderer.height;
-                this.app.stage.addChild(comp.getDrawable());
-                
+                this.app.stage.addChild(comp.getDrawable());  
         }
 }
 }
