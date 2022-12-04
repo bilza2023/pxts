@@ -1,30 +1,18 @@
-import {DisplayObject} from "pixi.js";
+import { DisplayObject } from "pixi.js";
+
 
 export default interface IDrawable {
-    startTime: number;
-    endTime: number;
 
-    // x: number;
-    // y: number;
-    
-    canvasWidth: number;
-    canvasHeight: number;
-    // height: number;
-    
-    // color: number;
-    setX(x:number):number;
-    setY(y:number):number;
-    setxy(x:number , y:number):void;
-    // sexy(x:number , y:number):void;
-    setWidth(width:number):number;
-    setHeight( height:number):number;
-    setWidthHeight(width:number,height:number):void;
+x            : number;
+y            : number;
+width        : number;
+height       : number;
+color        : number;
+rotation     : number;
+opacity      : number;
 
-//////////////////////////////////////////
-update( timeMs :number):void;
-qualifyToDraw(timeMs :number):boolean;    
-expired(timeMs :number):boolean;    
-getDrawable( ):DisplayObject;    
-
+//////////////////////////
+update( ):void;
+getDrawable():DisplayObject;
 
 }
