@@ -1,4 +1,4 @@
-import { DisplayObject, Graphics } from "pixi.js";
+import { Graphics } from "pixi.js";
 import IDrawable from "./IDrawable"
 /////////////////////////////////////////////
 
@@ -38,78 +38,67 @@ this.pvtOffsetX = 0;
 this.pvtOffsetY = 0;
 }
 
-public getDrawable():DisplayObject{
+public getDrawable():Graphics{
     return this.graphics;
 }
 //-----------------------------------------------
-pivot( x : 0|1|2,  y : 0|1|2=0){
-this.pvtOffsetX = x;       
-this.pvtOffsetY = y;       
+pivot( x : 0|1|2|null=null,  y : 0|1|2|null=null){
+    if ( x !== null ) {
+        this.pvtOffsetX = x;       
+    }
+    if (y !== null ) {
+        this.pvtOffsetY = y;       
+    }
 }
 
-rotateX():number {   
-let x = 0;
+
+getPivotX( ):number {   
+let ret = 0;    
     switch ( this.pvtOffsetX ) 
     {
     case 0 :
-        x = this.x;       
+        ret = 0;       
     break;
     case 1:
-        x = this.x + ((this.width/2));    
+        ret = ((this.width/2));    
     break;
     case 2:
-        x = this.x + ((this.width))
+        ret = ((this.width))
     break;
     }
-return x;        
+return ret;        
 }
-pivotX():number {   
-let x = 0;
-    switch ( this.pvtOffsetX ) 
-    {
-    case 0 :
-        x = 0;       
-    break;
-    case 1:
-        x = ((this.width/2));    
-    break;
-    case 2:
-        x = ((this.width))
-    break;
-    }
-return x;        
-}
-pivotY():number {   
-let y = 0;
+getPivotY():number {   
+let ret = 0;    
     switch ( this.pvtOffsetY ) 
     {
     case 0 :
-        y = 0;       
+        ret = 0;       
     break;
     case 1:
-        y = ( this.height/2 );    
+        ret = ((this.height/2));    
     break;
     case 2:
-        y = ( this.height );
+        ret = ((this.height))
     break;
     }
-return y;        
+return ret;        
 }
 
 //-----------------------------------------------
-// public update( ):void {
-//     this.graphics.width =  this.width;
-//     this.graphics.height =  this.height;
-//     this.graphics.angle =  this.rotation;
-//     this.graphics.alpha =  this.opacity/100;
-//     this.graphics.tint =  this.color;
+public update( ):void {
+    this.graphics.width =  this.width;
+    this.graphics.height =  this.height;
+    this.graphics.angle =  this.rotation;
+    this.graphics.alpha =  this.opacity/100;
+    this.graphics.tint =  this.color;
     
-//------------------set the rotation axis
-// this.graphics.pivot.x = 0;
-// this.graphics.pivot.y = 0;
-// this.graphics.x =  this.x;
-// this.graphics.y =  this.y;
-// }
+// ------------------set the rotation axis
+this.graphics.pivot.x = this.getPivotX();
+this.graphics.pivot.y = this.getPivotY();
+this.graphics.x =  this.x + this.getPivotX();
+this.graphics.y =  this.y + this.getPivotY();
+}
 
 //////////////////////////////////////////////////////////
 protected init(){}
