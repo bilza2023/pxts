@@ -1,66 +1,61 @@
-import {Graphics} from "pixi.js";
+import {Graphics,Container,DisplayObject} from "pixi.js";
 import PixiEngine from "./pixiEngine"
 import Rect from "./components/rect"
 import Line from "./components/line"
 import Circle from "./components/circle"
+import Ellipse from "./components/ellipse"
 ////////////////////////////////////////////////
-<<<<<<< HEAD
-const engine = new Engine(800,300);
-////////////////////////////////////////////////
-const comps: IDrawable[] = [];
-// const bg = new BaseGraph(0,3000);
-// comps.push(bg);
-const baseGraphDb = new BaseGraphDb(0,10_000,0,0,10,10,0xf20404);
-// baseGraphDb.rotation.animate(1,5,0,360 * 2);
-
-baseGraphDb.y.set( 50 );
-// baseGraphDb.x.animate(0,10,0,90);
-// baseGraphDb.height.animate(1,10,0,90);
-=======
 const canvasWidth = 800;
 const canvasHeight = 300;
+const color = 0x00ffff;
 const engine = new PixiEngine( canvasWidth , canvasHeight ,0xb5af6c);
 ////////////////////////////////////////////////
-const marker = new Rect(300, 40, 30, 30);
-marker.color = 0xe5e50d; 
-marker.init();
-// marker.update();
-engine.add(marker.getDrawable());
->>>>>>> bilza_cairo
 
 
-/////////////////////////////////////////////////////////
-const circle = new Circle(200,200,50, 0x00ffff);
-circle.init();
-engine.add(circle.getDrawable());
+const vertical  = drawRect( 400, 0, 2 ,300, 0x00ffff);
+const horzontal = drawRect( 0 , 150 , 800 ,2, 0x00ffff);
 
-/////////////////////////////////////////////////////////
-var line = new Line(0,50, 600,50);
-line.lineWidth = 2;
-// line.color = 0x04ff00;
-line.init();
-// line.lineStyle(1, 0xff0000);
-// line.moveTo(0,window.innerHeight/2);
-// line.lineTo(window.innerWidth/2, 0);
-// line.lineTo(window.innerWidth, window.innerHeight/2);
-engine.add(line.getDrawable());  
-/////////////////////////////////////////////////////////
+let width = 100;
+let xx = 400;
+let pvtX = 50;
+
+const graphics  = new Graphics();
+graphics.beginFill(0xcccfff);
+graphics.drawRect( xx, 100 , width, 100 );
+graphics.endFill();
+graphics.pivot.x = xx + width/2;
+
+engine.add(graphics);
+
+let count = 0;
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+setInterval( ( )=>{
+    if (count < 200){
+        count++;
+        width++;
+        pvtX++;
+        // xx++;
+    }
+
+    graphics.width = width + count;
+    // graphics.pivot.x = pvtX ;
+    // graphics.x = xx + count ;
+    graphics.x = xx ;
+
+    console.log("width", graphics.width );
+    console.log("pivot.x", graphics.pivot.x );
+    console.log("x", graphics.x );
+
+    // graphics.x = graphics.width;
+    // graphics.pivot.x = graphics.width;
+    
+},20);
 
 
-const bg = new Rect(100, 40, 100, 100);
-bg.color = 0xbc1a1a;
-bg.align(1,1);
-// bg.align(2,2);
-bg.init();
-
-engine.add(bg.getDrawable());
-
-let angle = 0;
-setInterval( ()=>{
-bg.rotation = angle ++;
-bg.update(); 
-circle.x = angle;
-circle.update(); 
-// bg.opacity = 10;
-// bg.update();
-},50 );
+function drawRect (x :number,y :number,width :number,height :number,color :number) {
+const graphics  = new Graphics();
+graphics.beginFill(color);
+graphics.drawRect( x, y , width, height );
+graphics.endFill();
+engine.add(graphics);
+}

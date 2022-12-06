@@ -6,8 +6,7 @@ export default class Circle extends BaseGraph {
 /////////////////////////////////////////
 
 constructor( x: number, y: number, width: number, color: number = 0x000000) {
-super(x, y, width, width);
-this.color = color;
+super(x, y, width, width,color);
 }
 
 

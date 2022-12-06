@@ -18,7 +18,7 @@ export default class BaseGraph  implements IDrawable{
     private pvtOffsetY      : 0|1|2;
     
 /////////////////////////////////////////
-constructor(x :number, y :number,width :number,height :number,color:number=0xffffff) {
+constructor(x :number, y :number,width :number,height :number,color:number) {
 
     this.id = Math.random().toString(36).slice(2);
     
@@ -42,7 +42,7 @@ public getDrawable():DisplayObject{
     return this.graphics;
 }
 //-----------------------------------------------
-align( x : 0|1|2,  y : 0|1|2=0){
+pivot( x : 0|1|2,  y : 0|1|2=0){
 this.pvtOffsetX = x;       
 this.pvtOffsetY = y;       
 }
@@ -89,10 +89,10 @@ public update( ):void {
     this.graphics.tint =  this.color;
     
 //------------------set the rotation axis
-this.graphics.x =  this.drawX();
-this.graphics.y =  this.drawY();
-this.graphics.pivot.x = this.drawX();
-this.graphics.pivot.y = this.drawY();
+this.graphics.pivot.x = 0;
+this.graphics.pivot.y = 0;
+this.graphics.x =  this.x;
+this.graphics.y =  this.y;
 }
 
 //////////////////////////////////////////////////////////
