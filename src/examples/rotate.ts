@@ -1,5 +1,9 @@
 import { Graphics, Container, DisplayObject, Application } from "pixi.js";
-import PixiEngine from "./pixiEngine"
+import PixiEngine from "../pixiEngine"
+import Rect from "../components/rect"
+import Line from "../components/line"
+import Circle from "../components/circle"
+import Ellipse from "../components/ellipse"
 ////////////////////////////////////////////////
 const canvasWidth = 800;
 const canvasHeight = 300;
@@ -14,24 +18,15 @@ engine.add(horzontal);
 
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-// const graf = engine.drawRect( 0, 0 , 100, 100 , 0xff0000 );
+const mainRect = new Rect(200, 150, 100, 100, 0xff0000);
+mainRect.pivot(1, 1);
+mainRect.init();
+const mainRectPixi = mainRect.getDrawable();
+engine.add(mainRectPixi);
 
-const graf = new Graphics();
-graf.beginFill(0xff0000);
-graf.drawRect(0, 0, 100, 100);
-graf.endFill();
-engine.add(graf);
-
-graf.pivot.x = 50;
-graf.pivot.y = 0;
-// graf.scale.x = 1;
-graf.x = 400;
-graf.y = 150;
-
-//////////////////////////
-setInterval(function () {
-    graf.width++;
-
+setInterval(() => {
+    mainRect.rotation += 0.5;
+    mainRect.init();
 }, 20);
 
 

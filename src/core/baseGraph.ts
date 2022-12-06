@@ -47,6 +47,22 @@ this.pvtOffsetX = x;
 this.pvtOffsetY = y;       
 }
 
+rotateX():number {   
+let x = 0;
+    switch ( this.pvtOffsetX ) 
+    {
+    case 0 :
+        x = this.x;       
+    break;
+    case 1:
+        x = this.x + ((this.width/2));    
+    break;
+    case 2:
+        x = this.x + ((this.width))
+    break;
+    }
+return x;        
+}
 pivotX():number {   
 let x = 0;
     switch ( this.pvtOffsetX ) 
