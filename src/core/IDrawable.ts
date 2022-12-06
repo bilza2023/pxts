@@ -12,7 +12,7 @@ rotation     : number;
 opacity      : number;
 
 //////////////////////////
-update( ):void;
+// update( ):void;
 getDrawable():DisplayObject;
 
 }

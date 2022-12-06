@@ -1,4 +1,4 @@
-import {Graphics,Container,DisplayObject} from "pixi.js";
+import {Graphics,Container,DisplayObject,Application} from "pixi.js";
 import PixiEngine from "./pixiEngine"
 import Rect from "./components/rect"
 import Line from "./components/line"
@@ -10,52 +10,45 @@ const canvasHeight = 300;
 const color = 0x00ffff;
 const engine = new PixiEngine( canvasWidth , canvasHeight ,0xb5af6c);
 ////////////////////////////////////////////////
+const vertical  = engine.drawRect( 400, 0, 1 ,300, 0x00ffff);
+engine.add(vertical);
+const horzontal = engine.drawRect( 0 , 150 , 800 ,2, 0x00ffff);
+engine.add(horzontal);
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+const mainRect = new Rect( 400, 0 , 1, 150 , 0xff0000 );
+mainRect.pivot(0);
+mainRect.init();
+const mainRectPixi = mainRect.getDrawable();
+engine.add(mainRectPixi);
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+const leftRect = new Rect( 400, 0 , 1, 150 , 0x00ff00 );
+leftRect.pivot(2);
+leftRect.init();
+const leftRectPixi = leftRect.getDrawable();
+engine.add(leftRectPixi);
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+const lowerRect = new Rect( 400, 150 , 1, 150 , 0x00ff );
+lowerRect.pivot(1);
+lowerRect.init();
+const lowerRectPixi = lowerRect.getDrawable();
+engine.add(lowerRectPixi);
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
+setInterval( ( ) => {
+if (mainRect.width < 400){ 
+    mainRect.width +=1;
+}
+mainRect.init();
 
-const vertical  = drawRect( 400, 0, 2 ,300, 0x00ffff);
-const horzontal = drawRect( 0 , 150 , 800 ,2, 0x00ffff);
+if (leftRect.width < 400){ 
+    leftRect.width +=1;
+}
+leftRect.init();
 
-let width = 100;
-let xx = 400;
-let pvtX = 50;
-
-const graphics  = new Graphics();
-graphics.beginFill(0xcccfff);
-graphics.drawRect( xx, 100 , width, 100 );
-graphics.endFill();
-graphics.pivot.x = xx + width/2;
-
-engine.add(graphics);
-
-let count = 0;
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-setInterval( ( )=>{
-    if (count < 200){
-        count++;
-        width++;
-        pvtX++;
-        // xx++;
-    }
-
-    graphics.width = width + count;
-    // graphics.pivot.x = pvtX ;
-    // graphics.x = xx + count ;
-    graphics.x = xx ;
-
-    console.log("width", graphics.width );
-    console.log("pivot.x", graphics.pivot.x );
-    console.log("x", graphics.x );
-
-    // graphics.x = graphics.width;
-    // graphics.pivot.x = graphics.width;
-    
+if (lowerRect.width < 800){ 
+    lowerRect.width +=1;
+}
+lowerRect.init();
 },20);
 
 
-function drawRect (x :number,y :number,width :number,height :number,color :number) {
-const graphics  = new Graphics();
-graphics.beginFill(color);
-graphics.drawRect( x, y , width, height );
-graphics.endFill();
-engine.add(graphics);
-}

@@ -1,4 +1,4 @@
-import { Application,DisplayObject,utils } from "pixi.js";
+import { Application,DisplayObject,utils,Graphics } from "pixi.js";
 
 ///////////////////////////////////////////
 export default class PixiEngine {
@@ -30,6 +30,15 @@ window.onload = async (): Promise<void> => {
 add(comp :DisplayObject){
     this.app.stage.addChild(comp);
 }
+
+drawRect (x :number,y :number,width :number,height :number,color :number) :DisplayObject {
+    const graphics  = new Graphics();
+    graphics.beginFill(color);
+    graphics.drawRect( x, y , width, height );
+    graphics.endFill();
+ return graphics;
+}
+
 }
 
 ///XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -49,7 +58,6 @@ function resizeCanvas(app: Application): void {
     /////////////////
     resize();
 }
-
 
 
 ////////////////--loadGameAssets

@@ -11,7 +11,6 @@ super(x,y,width,height,color);
 }
 
 
-
 init() {
 this.graphics.beginFill(this.color);
 
@@ -21,12 +20,17 @@ this.graphics.drawRect(
     this.width,
     this.height);
 
+//======================================
 this.graphics.endFill();
-/////////
-// this.graphics.pivot.x = this.graphics.width/2;
-// this.graphics.pivot.y = this.graphics.height/2;
-}
+//======================================
+this.graphics.angle =  this.rotation;
+this.graphics.alpha =  this.opacity/100;
+//======================================
+this.graphics.pivot.x =  this.pivotX();
+this.graphics.pivot.y =  this.pivotY();
+//======================================
 
+}
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }

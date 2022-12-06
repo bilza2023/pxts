@@ -47,53 +47,53 @@ this.pvtOffsetX = x;
 this.pvtOffsetY = y;       
 }
 
-drawX():number {   
+pivotX():number {   
 let x = 0;
     switch ( this.pvtOffsetX ) 
     {
     case 0 :
-        x = this.x;       
+        x = 0;       
     break;
     case 1:
-        x = this.x + ((this.width/2));    
+        x = ((this.width/2));    
     break;
     case 2:
-        x = this.x + ((this.width))
+        x = ((this.width))
     break;
     }
 return x;        
 }
-drawY():number {   
+pivotY():number {   
 let y = 0;
     switch ( this.pvtOffsetY ) 
     {
     case 0 :
-        y = this.y;       
+        y = 0;       
     break;
     case 1:
-        y = this.y + ( (this.height/2) );    
+        y = ( this.height/2 );    
     break;
     case 2:
-        y = this.y + ( (this.height) )
+        y = ( this.height );
     break;
     }
 return y;        
 }
 
 //-----------------------------------------------
-public update( ):void {
-    this.graphics.width =  this.width;
-    this.graphics.height =  this.height;
-    this.graphics.angle =  this.rotation;
-    this.graphics.alpha =  this.opacity/100;
-    this.graphics.tint =  this.color;
+// public update( ):void {
+//     this.graphics.width =  this.width;
+//     this.graphics.height =  this.height;
+//     this.graphics.angle =  this.rotation;
+//     this.graphics.alpha =  this.opacity/100;
+//     this.graphics.tint =  this.color;
     
 //------------------set the rotation axis
-this.graphics.pivot.x = 0;
-this.graphics.pivot.y = 0;
-this.graphics.x =  this.x;
-this.graphics.y =  this.y;
-}
+// this.graphics.pivot.x = 0;
+// this.graphics.pivot.y = 0;
+// this.graphics.x =  this.x;
+// this.graphics.y =  this.y;
+// }
 
 //////////////////////////////////////////////////////////
 protected init(){}
