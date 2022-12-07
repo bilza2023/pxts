@@ -33,7 +33,7 @@ graf.y = 150;
 const rect = new Rect( 400, 150, 100, 100, 0x00ff00);
 engine.add(rect.getDrawable());
 rect.init();
-rect.pivot( 2 , 0 );
+rect.pivot( 2 , 2 );
 // rect.getDrawable().pivot.x = 0;
 // rect.getDrawable().pivot.y = 50;
 // rect.x = 450; 
@@ -44,7 +44,7 @@ rect.update();
 setInterval(function () {
     // graf.width++;
 // rect.getDrawable().angle += 0.5;
-rect.getDrawable().width += 0.4;
+// rect.getDrawable().width += 0.4;
 // rect.getDrawable().height += 0.4;
 // graf.angle += 0.5;
 }, 20);
