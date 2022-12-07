@@ -7,7 +7,7 @@ import RoundRect from "./components/roundRect";
 import Line from "./components/line";
 import Polygon from "./components/polygon";
 import * as dat from "dat.gui";
-
+import Text from "./components/text";
 ////////////////////////////////////////////////
 const canvasWidth = 800;
 const canvasHeight = 300;
@@ -73,7 +73,11 @@ engine.add(rr.getDrawable());
 rr.color = 0x0000ff;
 rr.update();
 //////////////////////////
-
+const text = new Text("This is from PXTS..", 0x00ff00, 24);
+text.style.fill = 0x0000ff;
+text.text = "Do not Mess it Up";
+// text.init();
+engine.add(text);
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 setInterval(function () {
     rect.update();
@@ -86,6 +90,7 @@ setInterval(function () {
     // polygon.points[0] += 1;
     // polygon.points[1] += 1;
     polygon.update();
+    text.x += 0.1;
 }, 20);
 
 //////////////////////
@@ -118,3 +123,10 @@ lineFolder.add(lineObj, "x", 1, 800);
 lineFolder.add(lineObj, "y", 1, 300);
 lineFolder.add(lineObj, "x2", 1, 800);
 lineFolder.add(lineObj, "y2", 1, 300);
+/////////////////////////////////////////
+const textFolder = gui.addFolder("Text");
+textFolder.open();
+textFolder.add(text, "text");
+textFolder.add(text.style, "fill");
+textFolder.add(text.style, "fontSize", 5, 300);
+// textFolder.add(text, "style.fontSize" ,5,100);
