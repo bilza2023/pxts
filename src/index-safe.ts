@@ -1,11 +1,8 @@
 import { Graphics, Container, DisplayObject, Application } from "pixi.js";
-// import '@pixi/graphics-extras';
 import PixiEngine from "./pixiEngine";
 import Rect from "./components/rect";
 import Ellipse from "./components/ellipse";
 import RoundRect from "./components/roundRect";
-import Line from "./components/line";
-import Polygon from "./components/polygon";
 import * as dat from "dat.gui";
 
 ////////////////////////////////////////////////
@@ -23,31 +20,6 @@ const horzontal = new Rect(0, 150, 800, 2, 0x00ffff);
 horzontal.init();
 horzontal.update();
 engine.add(horzontal.getDrawable());
-
-//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-const polygon = new Polygon(10, 10, 200, 200, 0x00ff00);
-// 10, 10, 120, 100, 120, 200, 70, 200
-polygon.addPoint(10, 10);
-polygon.addPoint(120, 100);
-polygon.addPoint(120, 200);
-polygon.addPoint(70, 200);
-polygon.color = 0xff0000;
-polygon.init();
-engine.add(polygon.getDrawable());
-polygon.update();
-// const line = new Graphics ();
-// line.lineStyle(20, 0x000000);
-// line.moveTo(100, 100);
-// line.lineTo(700, 200);
-// engine.add(line);
-
-const lineObj = new Line(100, 10, 400, 200);
-engine.add(lineObj.getDrawable());
-lineObj.lineWidth = 20;
-lineObj.color = 0xff0000;
-lineObj.init();
-
-lineObj.update();
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 const rect = new Rect(400, 150, 100, 100, 0x00ff00);
@@ -73,19 +45,27 @@ engine.add(rr.getDrawable());
 rr.color = 0x0000ff;
 rr.update();
 //////////////////////////
-
-//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 setInterval(function () {
+    // rect.angle += 0.5;
+    // if (rect.angle > 10) {
+    //     rect.color = 0x245399;
+    // }
     rect.update();
+
+    ////////////////////////////////
+    // c.x += 0.3;
+    // c.width += 0.3;
+    // c.height += 0.3;
+    // c.opacity -= 0.1;
+    // if (c.width > 70) {
+    //     c.color = 0xff0000;
+    // }
     c.update();
+
+    ////
+    // rr.width += 0.3;
+    // rr.height += 0.3;
     rr.update();
-
-    // lineObj.x += 1;
-    lineObj.update();
-
-    // polygon.points[0] += 1;
-    // polygon.points[1] += 1;
-    polygon.update();
 }, 20);
 
 //////////////////////
@@ -103,18 +83,8 @@ transFolder.add(c, "x", 0, 800).name("x");
 transFolder.add(c, "y", 0, 300).name("y");
 
 gui.add(c, "angle", 0, 360).name("rotate");
-
-// gui.add(polygon, "points[0]", 0, 360).name("point");
-
-gui.addColor(c, "color")
+gui.addColor(c, "color", c.color)
     .name("color")
     .onChange(() => {
         console.log("dat.gui..color changed");
     });
-
-const lineFolder = gui.addFolder("line");
-lineFolder.open();
-lineFolder.add(lineObj, "x", 1, 800);
-lineFolder.add(lineObj, "y", 1, 300);
-lineFolder.add(lineObj, "x2", 1, 800);
-lineFolder.add(lineObj, "y2", 1, 300);
