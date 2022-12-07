@@ -1,7 +1,7 @@
 {
     "name": "pxts",
-    "version": "1.0.0",
-    "description": "pixi.js typescript boilerplate webpack",
+    "version": "0.0.1",
+    "description": "A thin wrapper around pixi.js (in typescript) created for bilza.js",
     "browserslist": "> 0.25%, not dead",
     "scripts": {
         "webpack": "webpack",
@@ -22,12 +22,12 @@
         "code-style-check": "npm run lint-check && npm run prettier:check",
         "prepare": "husky install"
     },
-    "author": "jkanchelov",
+    "author": "Bilal Tariq",
     "license": "MIT",
     "dependencies": {
         "core-js": "^3.26.0",
-        "pixi-spine": "^3.0.16",
         "pixi.js": "^6.5.8",
+        "pixi-spine": "^3.0.16",
         "regenerator-runtime": "^0.13.10"
     },
     "devDependencies": {

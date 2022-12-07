@@ -1,4 +1,4 @@
-import BaseGraph from "../core/baseGraph"
+import BaseGraph from "../baseGraph/baseGraph"
 
 /////////////////////////////////////////////
 
@@ -23,17 +23,10 @@ this.graphics.drawRect(
 //======================================
 this.graphics.endFill();
 //======================================
-this.graphics.angle =  this.rotation;
+this.graphics.angle =  this.angle;
 this.graphics.alpha =  this.opacity/100;
-//======================================
-this.graphics.pivot.x =  0;
-this.graphics.pivot.y =  0;
-//--The position needs to be reset after the pivot has been changed
-        //forget the intial position reset it again
-this.graphics.x =  this.x;
-this.graphics.y =  this.y;
-//======================================
-
+//--Must
+this.postInit();
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
