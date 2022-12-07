@@ -23,10 +23,8 @@ this.graphics.drawRect(
 //======================================
 this.graphics.endFill();
 //======================================
-this.graphics.angle =  this.angle;
-this.graphics.alpha =  this.opacity/100;
 //--Must
-this.postInit();
+this.update();
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

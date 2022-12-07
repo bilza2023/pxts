@@ -55,6 +55,8 @@ public update( ):void {
 this.graphics.pivot.x = this.getPivotX( this.width);
 this.graphics.pivot.y = this.getPivotY( this.height );
 //--after pivot set position
+// this part ==> + this.getPivotX( this.width )
+//ensures that the element does not change location after pivot is changed. The change chaused by pivot is indicated by getPivotX and we already add that. If we do not add this then we can move the element as there is in align. So adding or not adding this value may be optional in future.
 this.graphics.x =  this.x + this.getPivotX( this.width );
 this.graphics.y =  this.y + this.getPivotY( this.height );
 }
@@ -70,15 +72,17 @@ public init(){
 /**
  * Every child must run this as the last line of their init function
  */
-protected postInit(){
-    //======================================
-this.graphics.pivot.x =  0;
-this.graphics.pivot.y =  0;
-//--The position needs to be reset after the pivot has been changed
-//Set the position again even if it was set before
-this.graphics.x =  this.x;
-this.graphics.y =  this.y;
-//======================================
-}
+// protected postInit(){
+// this.graphics.angle =  this.angle;
+// this.graphics.alpha =  this.opacity/100;    
+// //======================================
+// this.graphics.pivot.x =  0;
+// this.graphics.pivot.y =  0;
+// //--The position needs to be reset after the pivot has been changed
+// //Set the position again even if it was set before
+// this.graphics.x =  this.x;
+// this.graphics.y =  this.y;
+// //======================================
+// }
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }

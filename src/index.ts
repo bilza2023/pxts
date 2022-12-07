@@ -7,10 +7,12 @@ const canvasHeight = 300;
 const color = 0x00ffff;
 const engine = new PixiEngine(canvasWidth, canvasHeight, 0xb5af6c);
 ////////////////////////////////////////////////
-const vertical = engine.drawRect(400, 0, 1, 300, 0x00ffff);
-engine.add(vertical);
-const horzontal = engine.drawRect(0, 150, 800, 2, 0x00ffff);
-engine.add(horzontal);
+const vertical = new Rect(400, 0, 1, 300, 0x00ffff);
+vertical.init();
+engine.add(vertical.getDrawable());
+const horzontal = new Rect(0, 150, 800, 2, 0x00ffff);
+horzontal.init();
+engine.add(horzontal.getDrawable());
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 const rect = new Rect( 400, 150, 100, 100, 0x00ff00);
