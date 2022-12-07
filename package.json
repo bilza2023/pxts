@@ -26,8 +26,8 @@
     "license": "MIT",
     "dependencies": {
         "core-js": "^3.26.0",
-        "pixi.js": "^6.5.8",
         "pixi-spine": "^3.0.16",
+        "pixi.js": "^6.5.8",
         "regenerator-runtime": "^0.13.10"
     },
     "devDependencies": {
@@ -41,6 +41,7 @@
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.1",
         "css-minimizer-webpack-plugin": "^4.2.2",
+        "dat.gui": "^0.7.9",
         "eslint": "^8.26.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",
