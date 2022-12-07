@@ -71,6 +71,20 @@ setInterval(function () {
 //////////////////////
 
 const gui = new dat.GUI();
-gui.add(c, "width", 1, 500);
-gui.add(c, "x", 0, 800);
-gui.add(c, "y", 0, 300);
+
+const scaleFolder = gui.addFolder("Scale");
+scaleFolder.add(c, "width", 1, 500).name("width");
+scaleFolder.add(c, "height", 1, 500).name("height");
+scaleFolder.open();
+//..
+const transFolder = gui.addFolder("Transition");
+
+transFolder.add(c, "x", 0, 800).name("x");
+transFolder.add(c, "y", 0, 300).name("y");
+
+gui.add(c, "angle", 0, 360).name("rotate");
+gui.addColor(c, "color", c.color)
+    .name("color")
+    .onChange(() => {
+        console.log("dat.gui..color changed");
+    });
