@@ -1,7 +1,7 @@
-import BaseWrapper from "./base/baseWrapper";
+import BaseGraphComp from "./base/baseGraphComp";
 /////////////////////////////////////////////
 
-export default class Line extends BaseWrapper {
+export default class Line extends BaseGraphComp {
     public x2: number;
     public y2: number;
     public lineWidth: number;

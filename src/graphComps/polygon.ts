@@ -1,7 +1,7 @@
-import BaseWrapper from "./base/baseWrapper";
+import BaseGraphComp from "./base/baseGraphComp";
 /////////////////////////////////////////////
 
-export default class Polygon extends BaseWrapper {
+export default class Polygon extends BaseGraphComp {
     /////////////////////////////////////////
     public points: number[];
     constructor() {

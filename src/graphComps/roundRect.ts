@@ -1,7 +1,7 @@
-import BaseWrapper from "./base/baseWrapper";
+import BaseGraphComp from "./base/baseGraphComp";
 /////////////////////////////////////////////
 
-export default class RoundRect extends BaseWrapper {
+export default class RoundRect extends BaseGraphComp {
     /////////////////////////////////////////
     constructor(width: number, height: number, radius: number = 10) {
         super();

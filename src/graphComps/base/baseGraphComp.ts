@@ -1,9 +1,9 @@
 import { Graphics, DisplayObject } from "pixi.js";
-import IWComp from "./IWComp";
+import IGraphComp from "./IGraphComp";
 import getOffset from "./offset";
 /////////////////////////////////////////////
 
-export default class BaseWrapper implements IWComp {
+export default class BaseGraphComp implements IGraphComp {
     protected graphics: Graphics;
     public readonly id: string;
     //------

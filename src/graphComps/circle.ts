@@ -1,7 +1,7 @@
-import BaseWrapper from "./base/baseWrapper";
+import BaseGraphComp from "./base/baseGraphComp";
 /////////////////////////////////////////////
 
-export default class Rect extends BaseWrapper {
+export default class Rect extends BaseGraphComp {
     /////////////////////////////////////////
     constructor(radius: number) {
         super();
