@@ -1,6 +1,5 @@
 import BaseGraphComp from "../baseGraphComp/baseGraphComp";
 /////////////////////////////////////////////
-
 export default class Rect extends BaseGraphComp {
     /////////////////////////////////////////
     constructor(diameter: number) {
@@ -11,9 +10,8 @@ export default class Rect extends BaseGraphComp {
 
     init(width: number) {
         this.graphics.beginFill(0xffffff); // Red
-        this.graphics.drawCircle(0, 0, width / 2); // drawCircle(x, y, radius)
+        this.graphics.drawCircle(0, 0, width / 2);
         this.graphics.endFill();
     }
-
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }

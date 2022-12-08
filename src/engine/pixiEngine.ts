@@ -1,5 +1,5 @@
 import { Application, DisplayObject, utils, Graphics } from "pixi.js";
-
+import IGraphComp from "../baseGraphComp/IGraphComp";
 ///////////////////////////////////////////
 export default class PixiEngine {
     private app: Application;
@@ -26,8 +26,8 @@ export default class PixiEngine {
         //----------------------------
     }
 
-    add(comp: DisplayObject) {
-        this.app.stage.addChild(comp);
+    add(comp: IGraphComp) {
+        this.app.stage.addChild(comp.getDrawable());
     }
 
     drawRect(x: number, y: number, width: number, height: number, color: number): DisplayObject {

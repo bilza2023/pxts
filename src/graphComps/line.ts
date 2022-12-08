@@ -2,30 +2,70 @@ import BaseGraphComp from "../baseGraphComp/baseGraphComp";
 /////////////////////////////////////////////
 
 export default class Line extends BaseGraphComp {
-    public _y: number;
-    public x2: number;
-    public y2: number;
-    public lineWidth: number;
+    private _x1: number;
+    private _y1: number;
+    private _x2: number;
+    private _y2: number;
+    private _lineWidth: number;
     /////////////////////////////////////////
-    constructor(x: number, y: number, x2: number, y2: number) {
+    constructor(x1: number, y1: number, x2: number, y2: number, color: number = 0x000000, lineWidth: number = 1) {
         super();
-        this._y = y;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.lineWidth = 2;
-        this.init(x, y, x2, y2);
+        this._x1 = x1;
+        this._y1 = y1;
+        this._x2 = x2;
+        this._y2 = y2;
+        this.color = color;
+        this._lineWidth = lineWidth;
+
+        this.init();
         /////////////////////////////
     }
 
-    init(x: number, y: number, x2: number, y2: number) {
+    init() {
         this.graphics.clear();
-        this.graphics.lineStyle(this.lineWidth, 0xffffff);
-        this.graphics.moveTo(x, y);
-        this.graphics.lineTo(x2, y2);
+        this.graphics.lineStyle(this._lineWidth, this.color);
+        this.graphics.moveTo(this._x1, this._y1);
+        this.graphics.lineTo(this._x2, this._y2);
     }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    set x(x: number) {
-        this.init(x, this._y, this.x2, this.y2);
+    set x1(x1: number) {
+        this._x1 = x1;
+        this.init();
+    }
+    get x1() {
+        return this._x1;
+    }
+
+    set y1(y1: number) {
+        this._y1 = y1;
+        this.init();
+    }
+    get y1() {
+        return this._y1;
+    }
+
+    set x2(x2: number) {
+        this._x2 = x2;
+        this.init();
+    }
+    get x2() {
+        return this._x2;
+    }
+
+    set y2(y2: number) {
+        this._y2 = y2;
+        this.init();
+    }
+    get y2() {
+        return this._y2;
+    }
+
+    set lineWidth(lineWidth: number) {
+        this._lineWidth = lineWidth;
+        this.init();
+    }
+    get lineWidth() {
+        return this._lineWidth;
     }
 }
