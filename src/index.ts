@@ -15,6 +15,8 @@ const canvasHeight = 300;
 const color = 0x00ffff;
 const engine = new PixiEngine(canvasWidth, canvasHeight, 0xb5af6c);
 ////////////////////////////////////////////////
+
+//.....................................................
 const title = new Text("These are Wrapper Components", 0x0000ff, 50);
 title.x = 30;
 title.y = 30;
@@ -67,20 +69,35 @@ const line = new Line(0, 0, 200, 100);
 line.color = 0xffff00;
 engine.add(line.getDrawable());
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
+//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+// const l = new Graphics();
+// engine.add(l);
+
+// const editLine = (gr :Graphics, x1:number, y1:number , x2:number , y2:number ) =>{
+//     gr.clear();
+//     gr.lineStyle( 5, 0xff0000);
+//     gr.moveTo(x1, y1);
+//     gr.lineTo( x2,y2);
+//     // console.log("line.x",gr.x);
+// }
+//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
+//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 let count = 0;
 const speed = 0.3;
 setInterval(function () {
     count += speed;
     rect.angle = count;
 
-    ellipse.x = ellipse.getX() + 0.4;
+    ellipse.x = ellipse.x + 0.4;
 
-    rr.x = rr.getX() + 0.3;
-    rr.y = rr.getY() + 0.1;
+    rr.x = rr.x + 0.3;
+    rr.y = rr.y + 0.1;
     rr.angle = count;
 
-    line.x = count;
-
+    line.x = count * 1.5;
+    // editLine(l,count,0,200,100);
+    console.log("line.x", line.x);
     circle.x = count / 2;
 
     title.y = count;

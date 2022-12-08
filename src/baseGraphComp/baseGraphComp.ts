@@ -26,61 +26,61 @@ export default class BaseGraphComp implements IGraphComp {
     set x(x: number) {
         this.graphics.x = x;
     }
-    getX(): number {
+    get x(): number {
         return this.graphics.x;
     }
     //===Y
     set y(y: number) {
         this.graphics.y = y;
     }
-    getY(): number {
+    get y(): number {
         return this.graphics.y;
     }
 
     set width(width: number) {
         this.graphics.width = width;
     }
-    getWidth(): number {
+    get width(): number {
         return this.graphics.width;
     }
 
     set height(height: number) {
         this.graphics.height = height;
     }
-    getHeight(): number {
+    get height(): number {
         return this.graphics.height;
     }
 
     set color(color: number) {
         this.graphics.tint = color;
     }
-    getColor(): number {
+    get color(): number {
         return this.graphics.tint;
     }
     set angle(angle: number) {
         this.graphics.angle = angle;
     }
-    getAngle(): number {
+    get angle(): number {
         return this.graphics.angle;
     }
     set opacity(opacity: number) {
         this.graphics.alpha = opacity;
     }
-    getOpacity(): number {
+    get opacity(): number {
         return this.graphics.alpha;
     }
 
     public setOriginX(x: 0 | 1 | 2): void {
-        const oldx = this.getX();
+        const oldx = this.x;
         this.x = 0;
-        const offset = getOffset(x, this.getWidth());
+        const offset = getOffset(x, this.width);
         this.graphics.pivot.x = offset;
         this.x = oldx + offset;
     }
     public setOriginY(y: 0 | 1 | 2): void {
-        const oldy = this.getY();
+        const oldy = this.y;
         this.y = 0;
-        const offset = getOffset(y, this.getHeight());
+        const offset = getOffset(y, this.height);
         this.graphics.pivot.y = offset;
         this.y = oldy + offset;
     }

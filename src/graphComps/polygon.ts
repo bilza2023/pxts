@@ -16,7 +16,7 @@ export default class Polygon extends BaseGraphComp {
             throw new Error("a polygon needs atleast 6 points to draw");
         }
 
-        this.graphics.beginFill(this.getColor());
+        this.graphics.beginFill(this.color);
 
         this.graphics.drawPolygon(this.points);
         //======================================
