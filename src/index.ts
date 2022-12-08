@@ -35,6 +35,7 @@ poly.addPoint(0, 0);
 poly.addPoint(100, 25);
 poly.addPoint(50, 50);
 poly.init();
+poly.color(0xc0fcff);
 poly.setOriginX(1);
 poly.x(200);
 poly.y(200);
@@ -67,14 +68,18 @@ line.color(0xffff00);
 engine.add(line.getDrawable());
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 let count = 0;
+const speed = 0.3;
 setInterval(function () {
-    rect.angle(count++);
+    count += speed;
+    rect.angle(count);
     poly.angle(count);
     ellipse.x(ellipse.getX() + 0.4);
     rr.x(rr.getX() + 0.3);
     rr.y(rr.getY() + 0.1);
     rr.angle(count);
     line.x(count);
+    circle.x(count / 2);
+    title.y = count;
     // poly.x(count++);
     // poly.y(count++);
     // rect.width(count++);
