@@ -1,4 +1,5 @@
-import BaseGraphComp from "./base/baseGraphComp";
+import { DisplayObject } from "pixi.js";
+import BaseGraphComp from "../baseGraphComp/baseGraphComp";
 /////////////////////////////////////////////
 
 export default class Polygon extends BaseGraphComp {
@@ -21,6 +22,14 @@ export default class Polygon extends BaseGraphComp {
         //======================================
         this.graphics.endFill();
         //======================================
+    }
+    /**
+* POLYGON CAN HIDE ITS INIT IN getDrawable()
+init only when asked to deliver graphics object. Before that the user can add points.
+*/
+    public getDrawable(): DisplayObject {
+        this.init();
+        return this.graphics;
     }
 
     addPoint(x: number, y: number) {

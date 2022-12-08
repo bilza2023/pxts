@@ -1,17 +1,17 @@
-import BaseGraphComp from "./base/baseGraphComp";
+import BaseGraphComp from "../baseGraphComp/baseGraphComp";
 /////////////////////////////////////////////
 
 export default class Rect extends BaseGraphComp {
     /////////////////////////////////////////
-    constructor(radius: number) {
+    constructor(diameter: number) {
         super();
-        this.init(radius / 2);
+        this.init(diameter);
         /////////////////////////////
     }
 
-    init(radius: number) {
+    init(width: number) {
         this.graphics.beginFill(0xffffff); // Red
-        this.graphics.drawCircle(0, 0, radius); // drawCircle(x, y, radius)
+        this.graphics.drawCircle(0, 0, width / 2); // drawCircle(x, y, radius)
         this.graphics.endFill();
     }
 

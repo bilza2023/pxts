@@ -1,4 +1,4 @@
-import BaseGraphComp from "./base/baseGraphComp";
+import BaseGraphComp from "../baseGraphComp/baseGraphComp";
 /////////////////////////////////////////////
 
 export default class Line extends BaseGraphComp {
