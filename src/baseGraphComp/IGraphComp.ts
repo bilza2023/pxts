@@ -6,13 +6,13 @@ import { DisplayObject } from "pixi.js";
 
 export default interface IWComp {
     //-8-dec-2021 7 public props
-    x(x: number): number;
-    y(y: number): number;
-    width(width: number): number;
-    height(height: number): number;
-    color(color: number): number;
-    angle(angle: number): number;
-    opacity(opacity: number): number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: number;
+    angle: number;
+    opacity: number;
 
     //////////////////////////
     // update( ):void;
