@@ -17,6 +17,8 @@ rect.x(100);
 rect.y(100);
 rect.width(100);
 rect.height(100);
+rect.setOriginX(0);
+rect.setOriginY(1);
 engine.add(rect.getDrawable());
 ///////////////////////////////////////
 const rect2 = new Graphics();
@@ -39,6 +41,7 @@ engine.add(rect2);
 let count = 0;
 setInterval(function () {
     rect.angle(count++);
+    // rect.width(count++);
 }, 20);
 
 //////////////////////

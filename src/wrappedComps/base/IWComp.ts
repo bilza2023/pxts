@@ -17,5 +17,8 @@ export default interface IWComp {
     //////////////////////////
     // update( ):void;
     getDrawable(): DisplayObject;
-    pivot(x: 0 | 1 | 2 | null, y: 0 | 1 | 2 | null): void;
+
+    setOriginX(x: 0 | 1 | 2 | null): void;
+    setOriginY(x: 0 | 1 | 2 | null): void;
+    setOrigin(x: 0 | 1 | 2 | null, y: 0 | 1 | 2 | null): void;
 }
