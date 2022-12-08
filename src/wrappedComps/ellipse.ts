@@ -1,20 +1,16 @@
-import BaseGraph from "../baseGraph/baseGraph";
-
+import BaseWrapper from "./base/baseWrapper";
 /////////////////////////////////////////////
 
-export default class Ellipse extends BaseGraph {
+export default class Rect extends BaseWrapper {
     /////////////////////////////////////////
-    constructor(x: number, y: number, width: number, height: number, color: number) {
-        super(x, y, width, height, color);
-        /////////////////////////////
+    constructor(width: number, height: number) {
+        super();
+        this.init(width, height);
     }
 
-    //xxxxxxx
-    init() {
-        this.graphics.beginFill(0xffffff); // Red
-        this.graphics.drawEllipse(0, 0, this.width, this.height); // drawCircle(x, y, radius)
+    init(width: number, height: number) {
+        this.graphics.beginFill(0xffffff);
+        this.graphics.drawEllipse(0, 0, width, height);
         this.graphics.endFill();
     }
-
-    //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }

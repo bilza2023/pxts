@@ -1,30 +1,25 @@
-import BaseGraph from "../baseGraph/baseGraph";
-
+import BaseWrapper from "./base/baseWrapper";
 /////////////////////////////////////////////
 
-export default class RoundRect extends BaseGraph {
-    radius: number;
+export default class RoundRect extends BaseWrapper {
     /////////////////////////////////////////
-    constructor(x: number, y: number, width: number, height: number, color: number, radius: number = 10) {
-        super(x, y, width, height, color);
-        this.radius = radius;
+    constructor(width: number, height: number, radius: number = 10) {
+        super();
+        this.init(width, height, radius);
         /////////////////////////////
     }
 
-    init() {
+    init(width: number, height: number, radius: number) {
         this.graphics.beginFill(0xffffff);
 
         this.graphics.drawRoundedRect(
             0, // dont use this.x in init since it accumulates
             0,
-            this.width,
-            this.height,
-            this.radius,
+            width,
+            height,
+            radius,
         );
-
-        //======================================
         this.graphics.endFill();
-        //======================================
     }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

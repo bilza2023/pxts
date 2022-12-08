@@ -1,4 +1,3 @@
-import { Graphics, Container, DisplayObject, Application } from "pixi.js";
 import BaseWrapper from "./base/baseWrapper";
 /////////////////////////////////////////////
 

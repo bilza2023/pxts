@@ -1,19 +1,13 @@
-import BaseGraph from "../baseGraph/baseGraph";
-
+import BaseWrapper from "./base/baseWrapper";
 /////////////////////////////////////////////
 
-export default class Polygon extends BaseGraph {
+export default class Polygon extends BaseWrapper {
     /////////////////////////////////////////
     public points: number[];
-    constructor(x: number, y: number, width: number, height: number, color: number) {
-        super(x, y, width, height, color);
+    constructor() {
+        super();
         this.points = [];
         /////////////////////////////
-    }
-
-    addPoint(x: number, y: number) {
-        this.points.push(x);
-        this.points.push(y);
     }
 
     init() {
@@ -21,7 +15,7 @@ export default class Polygon extends BaseGraph {
             throw new Error("a polygon needs atleast 6 points to draw");
         }
 
-        this.graphics.beginFill(this.color);
+        this.graphics.beginFill(this.getColor());
 
         this.graphics.drawPolygon(this.points);
         //======================================
@@ -29,8 +23,8 @@ export default class Polygon extends BaseGraph {
         //======================================
     }
 
-    public update(): void {
-        this.init();
+    addPoint(x: number, y: number) {
+        this.points.push(x);
+        this.points.push(y);
     }
-    //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }
