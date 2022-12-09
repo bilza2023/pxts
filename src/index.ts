@@ -1,112 +1,51 @@
-import { Graphics, Container, DisplayObject, Application } from "pixi.js";
-// import '@pixi/graphics-extras';
 import PixiEngine from "./engine/pixiEngine";
 import * as dat from "dat.gui";
 import Rect from "./graphComps/rect";
-import RoundRect from "./graphComps/roundRect";
-import Ellipse from "./graphComps/ellipse";
-import Circle from "./graphComps/circle";
-import Polygon from "./graphComps/polygon";
-import Line from "./graphComps/line";
-import Text from "./graphComps/text";
+
 ////////////////////////////////////////////////
-const canvasWidth = 800;
-const canvasHeight = 300;
-const color = 0x00ffff;
-const engine = new PixiEngine(canvasWidth, canvasHeight, 0xb5af6c);
+const engine = new PixiEngine(800, 300, 0xb5af6c);
 ////////////////////////////////////////////////
 
-//.....................................................
-const title = new Text("These are Graph Wrapper Components", 0x0000ff, 40);
-title.color = 0xff0000;
-// title.x = 30;
-// title.y = 30;
-engine.add(title);
-//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
 const rect = new Rect(100, 100);
 rect.color = 0x00ff00;
 rect.x = 100;
 rect.y = 100;
 rect.width = 100;
 rect.height = 100;
-rect.setOriginX(0);
-rect.setOriginY(1);
+// rect.
+rect.originX = 50;
+rect.originY = 50;
 engine.add(rect);
-///////////////////////////////////////
-const poly = new Polygon();
-poly.addPoint(0, 0);
-poly.addPoint(100, 25);
-poly.addPoint(50, 50);
-
-poly.color = 0xc0fcff;
-poly.setOriginX(1);
-poly.x = 200;
-poly.y = 200;
-engine.add(poly);
-// console.log(poly.getWidth());
-//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-const circle = new Circle(100);
-circle.color = 0xff0000;
-// circle.setOrigin(0);
-circle.x = 400;
-// circle.height = 55000;
-circle.y = 200;
-engine.add(circle);
-// //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-const ellipse = new Ellipse(20, 10);
-ellipse.color = 0x00ffff;
-ellipse.x = 100;
-ellipse.y = 100;
-engine.add(ellipse);
-// //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-const rr = new RoundRect(80, 40);
-rr.y = 150;
-rr.color = 0x0000ff;
-rr.setOriginX(1);
-rr.setOriginY(1);
-engine.add(rr);
-// //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-const line = new Line(0, 0, 200, 100);
-// line.init(0,0,300,300);
-line.color = 0xffff00;
-engine.add(line);
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-
+const state = {
+    spin: true,
+};
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 let count = 0;
-const speed = 0.3;
+const speed = 0.5;
 setInterval(function () {
     count += speed;
-    rect.angle = count;
-
-    ellipse.x = ellipse.x + 0.4;
-
-    rr.x = rr.x + 0.3;
-    rr.y = rr.y + 0.1;
-    rr.angle = count;
-
-    line.x1 = count * 1.5;
-    // editLine(l,count,0,200,100);
-    console.log("line.x - x1", line.x, line.x1);
-
-    circle.x = count / 2;
-
-    title.y = count;
-
-    poly.angle = count;
-    poly.x = count;
-    poly.y = count;
+    if (state.spin == true) {
+        rect.angle = count;
+    }
+    // rect.originX = count;
 }, 20);
 
 //////////////////////
 
-// const gui = new dat.GUI();
+const gui = new dat.GUI();
 
-// const rectFolder = gui.addFolder("Rect");
+const rectFolder = gui.addFolder("Rect Component");
+rectFolder.add(rect, "x", 1, 900).name("x");
+rectFolder.add(rect, "y", 1, 400).name("y");
+rectFolder.add(rect, "width", 1, 500).name("width");
+rectFolder.add(rect, "height", 1, 500).name("height");
+rectFolder.add(rect, "opacity", 0, 1).name("opacity");
+rectFolder.add(rect, "angle", 0, 360).name("angle");
+rectFolder.add(rect, "angle", 0, 360).name("angle Value").listen();
+rectFolder.add(state, "spin").name("Animation");
+rectFolder.addColor(rect, "color").name("color");
+// rectFolder.add(rect, "originX", 0, 50).name("originX");
+// rectFolder.add(rect, "originY", 0, 50).name("originY");
 
-// gui.addColor(c, "color")
-//     .name("color")
-//     .onChange(() => {
-//         console.log("dat.gui..color changed");
-//     });
+rectFolder.open();
