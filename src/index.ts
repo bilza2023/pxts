@@ -5,15 +5,9 @@ import Rect from "./graphComps/rect";
 ////////////////////////////////////////////////
 const engine = new PixiEngine(800, 300, 0xb5af6c);
 ////////////////////////////////////////////////
-const dot = new Rect(15, 15);
-dot.x = 300;
-dot.y = 100;
-dot.color = 0xff0000;
-engine.add(dot);
-///////////////////////////////////
 ////////////////////////////////////////////////
 const bgRect = new Rect(100, 100);
-bgRect.x = 100;
+bgRect.x = 350;
 bgRect.y = 100;
 bgRect.color = 0x00ff00;
 engine.add(bgRect);
@@ -21,16 +15,20 @@ engine.add(bgRect);
 
 const rect = new Rect(100, 100);
 rect.color = 0xff0000;
-rect.x = 100;
+rect.x = 350;
 rect.y = 100;
+
+rect.opacity = 0.8;
 
 rect.pivotX = 0;
 rect.pivotY = 0;
 engine.add(rect);
-//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
 class StateObj {
     pivotX: number;
-    pivotY: 0 | 1 | 2;
+    pivotY: number;
     spin: boolean;
 
     constructor() {
@@ -67,10 +65,7 @@ rectFolder.add(rect, "opacity", 0, 1).name("opacity");
 rectFolder.add(rect, "angle", 0, 360).name("angle");
 rectFolder.add(rect, "angle", 0, 360).name("angle Value").listen();
 rectFolder.add(state, "spin").name("Animation");
-rectFolder.addColor(rect, "color").name("color");
-
-rectFolder.add(rect, "pivotX", 0, 200).name("pivotX");
-rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
+///////////////////////
 
 rectFolder.add(state, "pivotX", [0, 1, 2]).onChange(() => {
     console.log("stateObj", state.pivotX);
@@ -83,5 +78,10 @@ rectFolder.add(state, "pivotY", [0, 1, 2]).onChange(() => {
     //@ts-expect-error
     rect.pivotYAlign(parseInt(state.pivotY));
 });
+///////////////////////
 
+rectFolder.add(rect, "pivotX", 0, 200).name("pivotX");
+rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
+
+rectFolder.addColor(rect, "color").name("color");
 rectFolder.open();
