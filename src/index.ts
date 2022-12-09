@@ -5,6 +5,13 @@ import Rect from "./graphComps/rect";
 ////////////////////////////////////////////////
 const engine = new PixiEngine(800, 300, 0xb5af6c);
 ////////////////////////////////////////////////
+const dot = new Rect(15, 15);
+dot.x = 300;
+dot.y = 100;
+dot.color = 0xff0000;
+engine.add(dot);
+///////////////////////////////////
+////////////////////////////////////////////////
 const bgRect = new Rect(100, 100);
 bgRect.x = 100;
 bgRect.y = 100;
@@ -21,27 +28,21 @@ rect.pivotX = 0;
 rect.pivotY = 0;
 engine.add(rect);
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
-const state = {
-    spin: true,
-    pivotX0: () => {
-        rect.pivotXAlign(0);
-    },
-    pivotX1: () => {
-        rect.pivotXAlign(1);
-    },
-    pivotX2: () => {
-        rect.pivotXAlign(2);
-    },
-    pivotY0: () => {
-        rect.pivotYAlign(0);
-    },
-    pivotY1: () => {
-        rect.pivotYAlign(1);
-    },
-    pivotY2: () => {
-        rect.pivotYAlign(2);
-    },
-};
+class StateObj {
+    pivotX: number;
+    pivotY: 0 | 1 | 2;
+    spin: boolean;
+
+    constructor() {
+        this.pivotX = 0;
+        this.pivotY = 0;
+        this.spin = true;
+    }
+}
+////////////////////////////////
+const state = new StateObj();
+////////////////////////////////
+
 //sssssssssssssssssssssssssssssssssssssssssssssssssssssss
 let count = 0;
 const speed = 0.5;
@@ -68,12 +69,19 @@ rectFolder.add(rect, "angle", 0, 360).name("angle Value").listen();
 rectFolder.add(state, "spin").name("Animation");
 rectFolder.addColor(rect, "color").name("color");
 
-rectFolder.add(state, "pivotX0").name("pivotX0");
-rectFolder.add(state, "pivotX1").name("pivotX1");
-rectFolder.add(state, "pivotX2").name("pivotX2");
+rectFolder.add(rect, "pivotX", 0, 200).name("pivotX");
+rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
 
-rectFolder.add(state, "pivotY0").name("pivotY0");
-rectFolder.add(state, "pivotY1").name("pivotY1");
-rectFolder.add(state, "pivotY2").name("pivotY2");
+rectFolder.add(state, "pivotX", [0, 1, 2]).onChange(() => {
+    console.log("stateObj", state.pivotX);
+    //@ts-expect-error
+    rect.pivotXAlign(parseInt(state.pivotX));
+});
+
+rectFolder.add(state, "pivotY", [0, 1, 2]).onChange(() => {
+    console.log("stateObj", state.pivotY);
+    //@ts-expect-error
+    rect.pivotYAlign(parseInt(state.pivotY));
+});
 
 rectFolder.open();
