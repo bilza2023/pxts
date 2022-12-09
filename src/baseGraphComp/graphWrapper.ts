@@ -21,19 +21,6 @@ export default class BaseGraphComp {
     ////////////////////////////////////////////////////////
     //////////////==========setters===//////////////////////
     ////////////////////////////////////////////////////////
-    set x(x: number) {
-        this.graphics.x = x;
-    }
-    get x(): number {
-        return this.graphics.x;
-    }
-    //===Y
-    set y(y: number) {
-        this.graphics.y = y;
-    }
-    get y(): number {
-        return this.graphics.y;
-    }
 
     set width(width: number) {
         this.graphics.width = width;

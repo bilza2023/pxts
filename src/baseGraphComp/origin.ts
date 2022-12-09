@@ -1,43 +1,63 @@
 import GraphWrapper from "./graphWrapper";
 
 export default class Origin extends GraphWrapper {
+    orignalX: number;
+    orignalY: number;
     constructor() {
         super();
+        this.orignalX = 0;
+        this.orignalY = 0;
     }
 
-    set originX(x: number) {
-        const oldx = this.x;
-        this.x = 0;
+    set x(x: number) {
+        this.orignalX = x;
+        this.graphics.x = this.orignalX + this.graphics.pivot.x;
+    }
+    get x(): number {
+        return this.orignalX;
+    }
+    //===Y
+    set y(y: number) {
+        this.orignalY = y;
+        this.graphics.y = this.orignalY + this.graphics.pivot.y;
+    }
+    get y(): number {
+        return this.orignalY;
+    }
+    /////////////////////////////////////////
+    set pivotX(x: number) {
+        this.graphics.x = 0;
         this.graphics.pivot.x = x;
-        this.x = oldx + x;
+        this.graphics.x = this.orignalX + this.graphics.pivot.x;
     }
 
-    get originX() {
+    get pivotX() {
         return this.graphics.pivot.x;
     }
 
     ////////////////////////////
-    set originY(y: number) {
-        const oldy = this.y;
-        this.y = 0;
+    set pivotY(y: number) {
+        this.graphics.y = 0;
         this.graphics.pivot.y = y;
-        this.y = oldy + y;
+        this.graphics.y = this.orignalY + this.graphics.pivot.y;
     }
 
-    get originY() {
+    get pivotY() {
         return this.graphics.pivot.y;
     }
     ////////////////////////////////////
-    public originXAlign(x: 0 | 1 | 2): number {
+    public pivotXAlign(x: 0 | 1 | 2): number {
         const sum = this.zeroFiftyHundred(x, this.width);
-        this.originX = sum;
-        return this.originX;
+        this.pivotX = 0;
+        this.pivotX = sum;
+        return this.pivotX;
     }
 
-    public originYAlign(y: 0 | 1 | 2): number {
+    public pivotYAlign(y: 0 | 1 | 2): number {
         const sum = this.zeroFiftyHundred(y, this.height);
-        this.originY = sum;
-        return this.originY;
+        this.pivotY = 0;
+        this.pivotY = sum;
+        return this.pivotY;
     }
 
     ////////////////////////////

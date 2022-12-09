@@ -18,8 +18,9 @@ export default interface IGraphComp {
     // update( ):void;
     getDrawable(): DisplayObject;
 
-    originX: number;
-    originY: number;
-    originXAlign(x: 0 | 1 | 2): number;
-    originYAlign(x: 0 | 1 | 2): number;
+    pivotX: number;
+    pivotY: number;
+
+    pivotXAlign(x: 0 | 1 | 2): number;
+    pivotYAlign(x: 0 | 1 | 2): number;
 }
