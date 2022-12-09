@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 export default defineConfig(({ command, mode }) => ({
 //   base: command === 'build' ? '/etc.clientlibs/<project>/clientlibs/' : '/',
 
-  publicDir: command === 'build' ? false : 'src/assets',
+  // publicDir: command === 'build' ? false : 'src/assets',
 
   build: {
     brotliSize: false,

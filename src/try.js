@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-
-<script type="module">
-import {PixiEngine, Rect} from "../dist/pxts.js";
-
- import * as dat from './gui.js';
+import {PixiEngine,Rect} from "./index";
 ////////////////////////////////////////////////
 const engine = new PixiEngine(800, 300, 0xb5af6c);
 ////////////////////////////////////////////////
@@ -37,7 +24,7 @@ engine.add(rect);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 class StateObj {
-    
+
     constructor() {
         this.pivotX = 0;
         this.pivotY = 0;
@@ -61,7 +48,7 @@ setInterval(function () {
 
 //////////////////////
 
- const gui = new dat.GUI();
+const gui = new dat.GUI();
 
 const rectFolder = gui.addFolder("Rect Component");
 rectFolder.add(rect, "x", 1, 900).name("x");
@@ -92,9 +79,3 @@ rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
 
 rectFolder.addColor(rect, "color").name("color");
 rectFolder.open();
-
-</script>
-
-
-</body>
-</html>

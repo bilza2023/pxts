@@ -1,5 +1,6 @@
 import { Application, DisplayObject, utils, Graphics } from "pixi.js";
 import IGraphComp from "../baseGraphComp/IGraphComp";
+
 ///////////////////////////////////////////
 export default class PixiEngine {
     private app: Application;
@@ -17,7 +18,10 @@ export default class PixiEngine {
         this.app.stage.interactive = true;
         this.app.renderer.backgroundColor = backgroundColor;
         //.........................................
-        document.body.appendChild(this.app.view);
+        const cont = document.getElementById("container");
+        if (cont == null){throw new Error("container not found");
+         }
+        cont.appendChild(this.app.view);
         /////////////////////
         window.onload = async (): Promise<void> => {
             // await loadGameAssets();

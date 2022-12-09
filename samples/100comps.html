@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
         * {
     padding:0;
     margin:0;
@@ -23,11 +23,27 @@
     <script src="../misc/prism.js"></script>
     <link rel="stylesheet" href="../misc/prism.css">   
 
-    <title>Document</title>
+    <title>Bilza Core Samples</title>
 </head>
 <body>
-<div id="container"></div>
-<script type="module">
+
+<div id="canvasContainer">
+<canvas id="bilza"></canvas>
+<!--controls table-->
+<table id="controls" style="width:100%">
+<tr>    
+    <td style="width:10%"><button style="width:100%" id="start">Play</button></td>
+    <td style="width:10%"><button style="width:100%" id="stop">Stop</button></td>
+
+    <td style="width:70%">
+        <input type="range" id="slider" style="width:100%" value="0" max="20">
+    </td>
+    <td style="width:10%"></td>
+</tr>
+</table>
+
+</div>
+<script  type="module">
 import {PixiEngine, Rect} from "../dist/pxts.js";
 
  import * as dat from './gui.js';
@@ -111,10 +127,7 @@ rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
 
 rectFolder.addColor(rect, "color").name("color");
 rectFolder.open();
-
 </script>
-
-<hr/>
 
 <pre class="language-javascript">
 <code>
@@ -203,8 +216,6 @@ rectFolder.addColor(rect, "color").name("color");
 rectFolder.open();
 </code>
 </pre>
-
-
 
 </body>
 </html>
