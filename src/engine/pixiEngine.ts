@@ -19,7 +19,8 @@ export default class PixiEngine {
         this.app.renderer.backgroundColor = backgroundColor;
         //.........................................
         const cont = document.getElementById(id);
-        if (cont == null){throw new Error("container not found");
+        if (cont == null){
+        throw new Error("container not found");
          }
         cont.appendChild(this.app.view);
         /////////////////////
