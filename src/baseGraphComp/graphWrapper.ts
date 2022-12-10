@@ -1,58 +1,52 @@
 import { Graphics, DisplayObject } from "pixi.js";
+import IComponent from "../common/IComponent";
+import RootComp from "../common/rootComp";
 /////////////////////////////////////////////
 
-export default class BaseGraphComp {
-    protected graphics: Graphics;
-    public readonly id: string;
+export default class BaseGraphComp extends RootComp {
+    protected pixiObj: Graphics;
     /////////////////////////////////////////
     constructor() {
-        this.graphics = new Graphics();
-        this.id = Math.random().toString(36).slice(2);
-        //--- We will add the init code here:
+    super();
+        this.pixiObj = new Graphics();
     }
-    /**
-     * Returns the pixi Graphics/DisplayObject element.
-     * @returns Graphics
-     */
-    public getDrawable(): DisplayObject {
-        return this.graphics;
-    }
+    
 
     ////////////////////////////////////////////////////////
     //////////////==========setters===//////////////////////
     ////////////////////////////////////////////////////////
 
     set width(width: number) {
-        this.graphics.width = width;
+        this.pixiObj.width = width;
     }
     get width(): number {
-        return this.graphics.width;
+        return this.pixiObj.width;
     }
 
     set height(height: number) {
-        this.graphics.height = height;
+        this.pixiObj.height = height;
     }
     get height(): number {
-        return this.graphics.height;
+        return this.pixiObj.height;
     }
 
     set color(color: number) {
-        this.graphics.tint = color;
+        this.pixiObj.tint = color;
     }
     get color(): number {
-        return this.graphics.tint;
+        return this.pixiObj.tint;
     }
 
     set angle(angle: number) {
-        this.graphics.angle = angle;
+        this.pixiObj.angle = angle;
     }
     get angle(): number {
-        return this.graphics.angle;
+        return this.pixiObj.angle;
     }
     set opacity(opacity: number) {
-        this.graphics.alpha = opacity;
+        this.pixiObj.alpha = opacity;
     }
     get opacity(): number {
-        return this.graphics.alpha;
+        return this.pixiObj.alpha;
     }
 }

@@ -1,4 +1,4 @@
-import BaseGraphComp from "../baseGraphComp/baseGraphComp";
+import BaseGraphComp from "../baseGraphComp/graphWrapper";
 /////////////////////////////////////////////
 
 export default class Rect extends BaseGraphComp {

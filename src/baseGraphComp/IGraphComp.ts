@@ -1,15 +1,12 @@
-import IComponent from "../common/IComponent";
 import { Graphics } from "pixi.js";
-
+import IComponent from "../common/IComponent";
 /**
- * The IGraphComp interface extends IComponent.
- * adds graphics specific props
- * overwrite pixiObj to Graphics
+ * The IDrawable interface needs to be implemented by an drawable component in this library.
  */
 
-export default interface IGraphComp extends IComponent {
-    //--over written
-    pixiObj: Graphics;
+export default interface   extends IComponent {
+    //-8-dec-2021 7 public props
+    pixiObj:Graphics;
     width: number;
     height: number;
     angle: number;

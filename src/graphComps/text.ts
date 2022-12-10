@@ -1,4 +1,4 @@
-import BaseGraphComp from "../baseGraphComp/baseGraphComp";
+import BaseGraphComp from "../baseGraphComp/graphWrapper";
 
 import { DisplayObject, Text as PixiText, TextStyle } from "pixi.js";
 

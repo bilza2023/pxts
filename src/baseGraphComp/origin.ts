@@ -1,6 +1,6 @@
 import GraphWrapper from "./graphWrapper";
 
-export default class Origin extends GraphWrapper {
+export default class Origin extends GraphWrapper implements IComponent {
     orignalX: number;
     orignalY: number;
     constructor() {

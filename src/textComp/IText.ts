@@ -10,5 +10,5 @@ export default interface IText extends IComponent {
     
 width:number;
 height:number;
-
+angle: number;
 }

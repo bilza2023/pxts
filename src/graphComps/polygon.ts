@@ -1,5 +1,5 @@
 import { DisplayObject } from "pixi.js";
-import BaseGraphComp from "../baseGraphComp/baseGraphComp";
+import BaseGraphComp from "../baseGraphComp/graphWrapper";
 /////////////////////////////////////////////
 
 export default class Polygon extends BaseGraphComp {
