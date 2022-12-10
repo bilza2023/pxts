@@ -1,8 +1,9 @@
 import { DisplayObject } from "pixi.js";
-import BaseGraphComp from "../baseGraphComp/graphWrapper";
+// import BaseGraphComp from "../boxGraphComp/graphWrapper";
+import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 
-export default class Polygon extends BaseGraphComp {
+export default class Polygon extends BoxGraphComp {
     /////////////////////////////////////////
     public points: number[];
     constructor() {
@@ -16,11 +17,11 @@ export default class Polygon extends BaseGraphComp {
             throw new Error("a polygon needs atleast 6 points to draw");
         }
 
-        this.graphics.beginFill(this.color);
+        this.pixiObj.beginFill(this.color);
 
-        this.graphics.drawPolygon(this.points);
+        this.pixiObj.drawPolygon(this.points);
         //======================================
-        this.graphics.endFill();
+        this.pixiObj.endFill();
         //======================================
     }
     /**
@@ -29,7 +30,7 @@ init only when asked to deliver graphics object. Before that the user can add po
 */
     public getDrawable(): DisplayObject {
         this.init();
-        return this.graphics;
+        return this.pixiObj;
     }
 
     addPoint(x: number, y: number) {

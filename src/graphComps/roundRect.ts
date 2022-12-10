@@ -1,7 +1,8 @@
-import BaseGraphComp from "../baseGraphComp/graphWrapper";
+// import BaseGraphComp from "../boxGraphComp/graphWrapper";
+import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 
-export default class RoundRect extends BaseGraphComp {
+export default class RoundRect extends BoxGraphComp {
     /////////////////////////////////////////
     constructor(width: number, height: number, radius: number = 10) {
         super();
@@ -10,16 +11,16 @@ export default class RoundRect extends BaseGraphComp {
     }
 
     init(width: number, height: number, radius: number) {
-        this.graphics.beginFill(0xffffff);
+        this.pixiObj.beginFill(0xffffff);
 
-        this.graphics.drawRoundedRect(
+        this.pixiObj.drawRoundedRect(
             0, // dont use this.x in init since it accumulates
             0,
             width,
             height,
             radius,
         );
-        this.graphics.endFill();
+        this.pixiObj.endFill();
     }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

@@ -1,7 +1,8 @@
-import BaseGraphComp from "../baseGraphComp/graphWrapper";
+// import BaseGraphComp from "../boxGraphComp/graphWrapper";
+import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 
-export default class Rect extends BaseGraphComp {
+export default class Rect extends BoxGraphComp {
     /////////////////////////////////////////
     constructor(width: number, height: number) {
         super();
@@ -9,8 +10,8 @@ export default class Rect extends BaseGraphComp {
     }
 
     init(width: number, height: number) {
-        this.graphics.beginFill(0xffffff);
-        this.graphics.drawEllipse(0, 0, width, height);
-        this.graphics.endFill();
+        this.pixiObj.beginFill(0xffffff);
+        this.pixiObj.drawEllipse(0, 0, width, height);
+        this.pixiObj.endFill();
     }
 }

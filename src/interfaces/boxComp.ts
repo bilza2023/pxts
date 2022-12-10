@@ -1,17 +1,22 @@
-import GraphWrapper from "./graphWrapper";
+import { Graphics,Text as PixiText,Sprite } from "pixi.js";
+// import IBoxComp from "./IBoxComp";
+import RootComp from "./rootComp";
 
-export default class Origin extends GraphWrapper implements IComponent {
-    orignalX: number;
-    orignalY: number;
-    constructor() {
-        super();
-        this.orignalX = 0;
-        this.orignalY = 0;
-    }
+export default class BoxComp extends RootComp   {
+    
+orignalX: number;
+orignalY: number;
+//..
+    constructor(pixiObj :Graphics | PixiText | Sprite) {
 
+super(pixiObj);
+this.orignalX = 0;
+this.orignalY = 0;
+}
+//--OVER-RIDE  parent
     set x(x: number) {
         this.orignalX = x;
-        this.graphics.x = this.orignalX + this.graphics.pivot.x;
+        this.pixiObj.x = this.orignalX + this.pixiObj.pivot.x;
     }
     get x(): number {
         return this.orignalX;
@@ -19,31 +24,51 @@ export default class Origin extends GraphWrapper implements IComponent {
     //===Y
     set y(y: number) {
         this.orignalY = y;
-        this.graphics.y = this.orignalY + this.graphics.pivot.y;
+        this.pixiObj.y = this.orignalY + this.pixiObj.pivot.y;
     }
     get y(): number {
         return this.orignalY;
     }
+
+    set width(width: number) {
+        this.pixiObj.width = width;
+    }
+    get width(): number {
+        return this.pixiObj.width;
+    }
+
+    set height(height: number) {
+        this.pixiObj.height = height;
+    }
+    get height(): number {
+        return this.pixiObj.height;
+    }
+    set angle(angle: number) {
+        this.pixiObj.angle = angle;
+    }
+    get angle(): number {
+        return this.pixiObj.angle;
+    }
     /////////////////////////////////////////
     set pivotX(x: number) {
-        this.graphics.x = 0;
-        this.graphics.pivot.x = x;
-        this.graphics.x = this.orignalX + this.graphics.pivot.x;
+        this.pixiObj.x = 0;
+        this.pixiObj.pivot.x = x;
+        this.pixiObj.x = this.orignalX + this.pixiObj.pivot.x;
     }
 
     get pivotX() {
-        return this.graphics.pivot.x;
+        return this.pixiObj.pivot.x;
     }
 
     ////////////////////////////
     set pivotY(y: number) {
-        this.graphics.y = 0;
-        this.graphics.pivot.y = y;
-        this.graphics.y = this.orignalY + this.graphics.pivot.y;
+        this.pixiObj.y = 0;
+        this.pixiObj.pivot.y = y;
+        this.pixiObj.y = this.orignalY + this.pixiObj.pivot.y;
     }
 
     get pivotY() {
-        return this.graphics.pivot.y;
+        return this.pixiObj.pivot.y;
     }
     ////////////////////////////////////
     public pivotXAlign(x: 0 | 1 | 2): number {
@@ -76,4 +101,6 @@ export default class Origin extends GraphWrapper implements IComponent {
         }
         return ret;
     }
+   
+    
 }

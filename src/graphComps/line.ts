@@ -1,7 +1,8 @@
-import BaseGraphComp from "../baseGraphComp/graphWrapper";
+// import BaseGraphComp from "../boxGraphComp/graphWrapper";
+import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 
-export default class Line extends BaseGraphComp {
+export default class Line extends BoxGraphComp {
     private _x1: number;
     private _y1: number;
     private _x2: number;
@@ -22,10 +23,10 @@ export default class Line extends BaseGraphComp {
     }
 
     init() {
-        this.graphics.clear();
-        this.graphics.lineStyle(this._lineWidth, this.color);
-        this.graphics.moveTo(this._x1, this._y1);
-        this.graphics.lineTo(this._x2, this._y2);
+        this.pixiObj.clear();
+        this.pixiObj.lineStyle(this._lineWidth, this.color);
+        this.pixiObj.moveTo(this._x1, this._y1);
+        this.pixiObj.lineTo(this._x2, this._y2);
     }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
