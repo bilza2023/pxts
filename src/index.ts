@@ -1,11 +1,31 @@
+
 import PixiEngine from "./engine/pixiEngine";
+
+//-six Graphics Components
 import Rect from "./graphComps/rect";
+import Circle from "./graphComps/circle";
+import Ellipse from "./graphComps/ellipse";
+import Line from "./graphComps/line";
+import Polygon from "./graphComps/polygon";
+import RoundRect from "./graphComps/roundRect";
 
+//-1 text comp
+import Text from "./textComp/text";
 
-
+//--dat gui
+ import * as dat from 'dat.gui';
 
 ////////////////////////////////
 export {
 PixiEngine,
-Rect
+Rect,
+Circle,
+Ellipse,
+Line,
+Polygon,
+RoundRect,
+
+Text,
+
+dat
 }

@@ -14,10 +14,12 @@ this.style = new TextStyle();
         this.style.fontSize = fontSize;
         this.style.lineHeight = 28;
         this.style.letterSpacing = 0;
-        this.style.fill = color;
+        this.style.fill = 0xffffff;
         this.style.align = "center";
     this.pixiObj = new PixiText(content,this.style);    
-    // this.pixiObj.text = content;
+    this.pixiObj.x = 0;    
+    this.pixiObj.y = 0;    
+    this.pixiObj.tint = color;
 }
 
     set x(x: number) {
@@ -50,6 +52,28 @@ this.style = new TextStyle();
 
     get opacity() {
         return this.pixiObj.alpha;
+    }
+
+    set width (width: number) {
+        this.pixiObj.width = width;
+    }
+
+    get width() {
+        return this.pixiObj.width;
+    }
+    set height (height: number) {
+        this.pixiObj.height = height;
+    }
+
+    get height() {
+        return this.pixiObj.height;
+    }
+    set angle (angle: number) {
+        this.pixiObj.angle = angle;
+    }
+
+    get angle() {
+        return this.pixiObj.angle;
     }
     
     set text (text: string) {

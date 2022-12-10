@@ -7,6 +7,8 @@ export default interface IText extends IComponent {
     pixiObj: PixiText;
     style: TextStyle;
     text: String;
-
+    
+width:number;
+height:number;
 
 }
