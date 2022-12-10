@@ -6,7 +6,7 @@ export default class PixiEngine {
     private app: Application;
     ///////////////////////////
 
-    constructor(width: number = 600, height: number = 300, backgroundColor: number = 0xd3d3d3) {
+    constructor(id :string="bilza",width: number = 600, height: number = 300, backgroundColor: number = 0xd3d3d3) {
         //----------------------------
         utils.skipHello();
 
@@ -18,7 +18,7 @@ export default class PixiEngine {
         this.app.stage.interactive = true;
         this.app.renderer.backgroundColor = backgroundColor;
         //.........................................
-        const cont = document.getElementById("container");
+        const cont = document.getElementById(id);
         if (cont == null){throw new Error("container not found");
          }
         cont.appendChild(this.app.view);
