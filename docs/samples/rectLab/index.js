@@ -1,14 +1,17 @@
-import { PixiEngine, Rect, dat } from "./index.js";
+import { PixiEngine, Rect, dat } from "../pxts.js";
 
 ////////////////////////////////////////////////
 const engine = new PixiEngine("bilza", 800, 300, 0xb5af6c);
-////////////////////////////////////////////////
+
+//  Create a static rectangle for reference
 const bgRect = new Rect(100, 100);
 bgRect.x = 350;
 bgRect.y = 100;
 bgRect.color = 0x00ff00;
 engine.add(bgRect.pixiObj);
-///////////////////////////////////
+
+
+//--The rotating Rectangle
 
 const rect = new Rect(100, 100);
 rect.color = 0xff0000;
@@ -21,11 +24,9 @@ rect.pivotX = 0;
 rect.pivotY = 0;
 engine.add(rect.pixiObj);
 
-/////////////////////////////////////////////////
+
+//--Gui Related Code
 class StateObj {
-pivotX:number;
-pivotY:number;
-spin:boolean;
     constructor() {
         this.pivotX = 0;
         this.pivotY = 0;
@@ -33,10 +34,8 @@ spin:boolean;
     }
 }
 ////////////////////////////////
-const state = new StateObj();
-////////////////////////////////
 
-//sssssssssssssssssssssssssssssssssssssssssssssssssssssss
+const state = new StateObj();
 let count = 0;
 const speed = 0.5;
 setInterval(function () {
@@ -47,7 +46,7 @@ setInterval(function () {
     // rect.originX = count;
 }, 20);
 
-//////////////////////
+///----------------------------------------------
 
 const gui = new dat.GUI();
 

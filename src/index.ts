@@ -18,6 +18,7 @@ import Text from "./textComp/text";
 ////////////////////////////////
 export {
 PixiEngine,
+
 Rect,
 Circle,
 Ellipse,

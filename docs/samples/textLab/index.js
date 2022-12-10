@@ -1,20 +1,14 @@
 import { PixiEngine, Text,dat } from "../pxts.js";
 
 ////////////////////////////////////////////////
-const engine = new PixiEngine("bilza", 1000, 400, 0xb5af6c);
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-// const bgRect = new Rect(100, 100);
-// bgRect.x = 350;
-// bgRect.y = 100;
-// bgRect.color = 0x00ff00;
-// engine.add(bgRect.pixiObj);
+const engine = new PixiEngine("bilza", 800, 400, 0xb5af6c);
 ///////////////////////////////////
 const text = new Text("Welcome to PXTS",0xffff00,200);
 engine.add(text.pixiObj);
 
  
 
+///////////////////--Gui-code--////////////////////
 const gui = new dat.GUI();
 
 const rectFolder = gui.addFolder("Rect Component");
