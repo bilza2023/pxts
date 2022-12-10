@@ -1,4 +1,4 @@
-import { PixiEngine, Text,dat } from "../../dist/pxts.js";
+import { PixiEngine, Text,dat } from "../pxts.js";
 
 ////////////////////////////////////////////////
 const engine = new PixiEngine("bilza", 1000, 400, 0xb5af6c);
