@@ -24321,8 +24321,7 @@ const pixiObj = new Graphics();
 class BoxGraphComp extends BoxComp {
   constructor() {
     super(pixiObj);
-    __publicField(this, "pixiObj");
-    this.pixiObj = new Graphics();
+    __publicField(this, "pixiObj", new Graphics());
   }
 }
 let Rect$2 = class Rect extends BoxGraphComp {
@@ -24435,10 +24434,6 @@ class Polygon extends BoxGraphComp {
     this.pixiObj.drawPolygon(this.points);
     this.pixiObj.endFill();
   }
-  getDrawable() {
-    this.init();
-    return this.pixiObj;
-  }
   addPoint(x, y) {
     this.points.push(x);
     this.points.push(y);
@@ -24447,18 +24442,32 @@ class Polygon extends BoxGraphComp {
 class RoundRect extends BoxGraphComp {
   constructor(width, height, radius = 10) {
     super();
-    this.init(width, height, radius);
+    __publicField(this, "_width");
+    __publicField(this, "_height");
+    __publicField(this, "_radius");
+    this._width = width;
+    this._height = height;
+    this._radius = radius;
+    this.init();
   }
-  init(width, height, radius) {
+  init() {
+    this.pixiObj.clear();
     this.pixiObj.beginFill(16777215);
     this.pixiObj.drawRoundedRect(
       0,
       0,
-      width,
-      height,
-      radius
+      this._width,
+      this._height,
+      this._radius
     );
     this.pixiObj.endFill();
+  }
+  set radius(radius) {
+    this._radius = radius;
+    this.init();
+  }
+  get radius() {
+    return this._radius;
   }
 }
 class RootComp2 {
