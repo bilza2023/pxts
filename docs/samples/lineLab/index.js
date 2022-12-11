@@ -1,4 +1,4 @@
-import { PixiEngine, Rect,Line, dat } from "./index.js";
+import { PixiEngine, Rect,Line, dat } from "../pxts.js";
 
 const engine = new PixiEngine("bilza", 800, 300, 0xb5af6c);
 
@@ -24,9 +24,6 @@ engine.add(rect.pixiObj);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 class StateObj {
-pivotX:number;
-pivotY:number;
-spin:boolean;
     constructor() {
         this.pivotX = 0;
         this.pivotY = 0;

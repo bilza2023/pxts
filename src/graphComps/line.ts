@@ -24,6 +24,7 @@ export default class Line extends BoxGraphComp {
 
     init() {
         this.pixiObj.clear();
+
         this.pixiObj.lineStyle(this._lineWidth, this.color);
         this.pixiObj.moveTo(this._x1, this._y1);
         this.pixiObj.lineTo(this._x2, this._y2);

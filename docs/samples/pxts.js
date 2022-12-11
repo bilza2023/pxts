@@ -24350,6 +24350,18 @@ let Rect$1 = class Rect2 extends BoxGraphComp {
     this.pixiObj.drawCircle(0, 0, width / 2);
     this.pixiObj.endFill();
   }
+  set width(width) {
+    this.pixiObj.width = width;
+    this.pixiObj.height = width;
+  }
+  get width() {
+    return this.pixiObj.width;
+  }
+  set height(height) {
+  }
+  get height() {
+    return this.pixiObj.width;
+  }
 };
 class Rect3 extends BoxGraphComp {
   constructor(width, height) {
