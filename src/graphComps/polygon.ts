@@ -1,5 +1,3 @@
-import { DisplayObject } from "pixi.js";
-// import BaseGraphComp from "../boxGraphComp/graphWrapper";
 import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 
@@ -24,14 +22,7 @@ export default class Polygon extends BoxGraphComp {
         this.pixiObj.endFill();
         //======================================
     }
-    /**
-* POLYGON CAN HIDE ITS INIT IN getDrawable()
-init only when asked to deliver graphics object. Before that the user can add points.
-*/
-    public getDrawable(): DisplayObject {
-        this.init();
-        return this.pixiObj;
-    }
+   
 
     addPoint(x: number, y: number) {
         this.points.push(x);
