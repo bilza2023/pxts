@@ -15,6 +15,7 @@ export default defineConfig(({ command, mode }) => ({
     manifest: false,
     minify: mode === 'development' ? false : 'terser',
     outDir: 'dist',
+    emptyOutDir: false,
     assetsDir : 'assets',
     sourcemap: command === 'serve' ? 'inline' : false,
     lib: {

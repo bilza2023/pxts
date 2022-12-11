@@ -1,4 +1,4 @@
-import { Application, DisplayObject, utils, Graphics } from "pixi.js";
+import { Application, DisplayObject, utils } from "pixi.js";
 // import IGraphComp from "../baseGraphComp/IGraphComp";
 
 ///////////////////////////////////////////
@@ -30,18 +30,23 @@ export default class PixiEngine {
         };
         //----------------------------
     }
-
+    backgroundColor(backgroundColor :number){
+     this.app.renderer.backgroundColor = backgroundColor;
+    }
+    getApp():Application{
+    return this.app;
+    }
     add(comp: DisplayObject) {
         this.app.stage.addChild(comp);
     }
-
-    drawRect(x: number, y: number, width: number, height: number, color: number): DisplayObject {
-        const graphics = new Graphics();
-        graphics.beginFill(color);
-        graphics.drawRect(x, y, width, height);
-        graphics.endFill();
-        return graphics;
+    destroy(){
+        while(this.app.stage.children[0]) { 
+            this.app.stage.removeChild(
+                this.app.stage.children[0]
+                ); 
+            }
     }
+
 }
 
 ///XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

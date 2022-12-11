@@ -1,7 +1,7 @@
 import { PixiEngine, Rect,Line, dat } from "./index.js";
 
 const engine = new PixiEngine("bilza", 800, 300, 0xb5af6c);
-
+engine.backgroundColor(0xffcccc);
 //--
 const bgRect = new Rect(100, 100);
 bgRect.x = 350;
