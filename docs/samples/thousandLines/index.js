@@ -19,7 +19,7 @@ maxY2 : 400,
 
 
 function drawLines(){
-
+engine.destroy();
 for (let i = 0; i < (state.numberOfLines); i++) {
 
 const x1 = Math.floor(Math.random() * (state.maxX1 - state.minX1 + 1) + state.minX1)
@@ -45,6 +45,11 @@ return `0x${hx}`;
 const gui = new dat.GUI();
 
 
+gui.add(state,"numberOfLines", 1 , 1000).name("numberOfLines")
+.onChange(() => {
+    drawLines()
+});
+
 gui.add(state,"minX1", 0 , 800).name("minX1")
 .onChange(() => {
     drawLines()
@@ -55,12 +60,12 @@ gui.add(state,"maxX1", 0 , 800).name("maxX1")
     drawLines()
 });
 
-gui.add(state,"minY1", 0 , 800).name("minY1")
+gui.add(state,"minY1", 0 , 400).name("minY1")
 .onChange(() => {
     drawLines()
 });
 
-gui.add(state,"maxY1", 0 , 800).name("maxY1")
+gui.add(state,"maxY1", 0 , 400).name("maxY1")
 .onChange(() => {
     drawLines()
 });
@@ -75,12 +80,12 @@ gui.add(state,"maxX2", 0 , 800).name("maxX2")
     drawLines()
 });
 
-gui.add(state,"minY2", 0 , 800).name("minY2")
+gui.add(state,"minY2", 0 , 400).name("minY2")
 .onChange(() => {
     drawLines()
 });
 
-gui.add(state,"maxY2", 0 , 800).name("maxY2")
+gui.add(state,"maxY2", 0 , 400).name("maxY2")
 .onChange(() => {
     drawLines()
 });

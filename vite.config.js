@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => ({
     brotliSize: false,
     manifest: false,
     minify: mode === 'development' ? false : 'terser',
-    outDir: 'dist',
+    outDir: 'docs/samples',
     emptyOutDir: false,
     assetsDir : 'assets',
     sourcemap: command === 'serve' ? 'inline' : false,

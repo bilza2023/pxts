@@ -24183,15 +24183,21 @@ class PixiEngine {
       resizeCanvas(this.app);
     };
   }
+  backgroundColor(backgroundColor) {
+    this.app.renderer.backgroundColor = backgroundColor;
+  }
+  getApp() {
+    return this.app;
+  }
   add(comp) {
     this.app.stage.addChild(comp);
   }
-  drawRect(x, y, width, height, color2) {
-    const graphics = new Graphics();
-    graphics.beginFill(color2);
-    graphics.drawRect(x, y, width, height);
-    graphics.endFill();
-    return graphics;
+  destroy() {
+    while (this.app.stage.children[0]) {
+      this.app.stage.removeChild(
+        this.app.stage.children[0]
+      );
+    }
   }
 }
 function resizeCanvas(app) {
