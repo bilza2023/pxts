@@ -1,4 +1,4 @@
-import { PixiEngine, Rect, dat } from "./index.js";
+import { PixiEngine, Rect, dat } from "../pxts.js";
 
 const engine = new PixiEngine("bilza", 800, 400, 0xb5af6c);
 engine.backgroundColor(0xffcccc);
@@ -24,7 +24,7 @@ for (let row = 1; row < 9; row++) {
 
     const xVal = state.x +  (row * state.size);
 
-        const boardCol:Rect[] =  [];
+        const boardCol =  [];
         for (let col = 1; col < 9; col++) {
             const yVal =   state.y +  (col * state.size)
 
@@ -79,7 +79,7 @@ for (let row = 1; row < 9; row++) {
                 rect.color = state.color2;
                 paintColorOne = true;
                 }
-            console.log("rowNo", row,"colNo", col,"xValu",xVal,"yValue",yVal);
+            // console.log("rowNo", row,"colNo", col,"xValu",xVal,"yValue",yVal);
 
         }
     }
@@ -110,11 +110,5 @@ gui.addColor(state, "backgroundColor").name("backgroundColor")
 .onChange(() => {
    engine.backgroundColor(state.backgroundColor);
 });
-// gui.addFolder("Rect Component");
-// gui.add(rect, "x", 0, 1000).name("x");
-// gui.add(state, "pivotX", [0, 1, 2]).onChange(() => {
-//     console.log("stateObj", state.pivotX);
-//     //@ts-expect-error
-//     rect.pivotXAlign(parseInt(state.pivotX));
-// });
+
 gui.open();

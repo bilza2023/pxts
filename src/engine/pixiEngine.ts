@@ -50,6 +50,18 @@ export default class PixiEngine {
     return this.app.stage.children.length;
     }
 
+    canvasWidth():number{
+    return this.app.renderer.width;
+    }
+    canvasHeight():number{
+    return this.app.renderer.height;
+    }
+    stageWidth():number{
+    return this.app.stage.width;
+    }
+    stageHeight():number{
+    return this.app.stage.height;
+    }
 }
 
 ///XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
