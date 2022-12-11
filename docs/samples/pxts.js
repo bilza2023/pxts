@@ -24199,6 +24199,9 @@ class PixiEngine {
       );
     }
   }
+  totalComps() {
+    return this.app.stage.children.length;
+  }
 }
 function resizeCanvas(app) {
   const resize = () => {

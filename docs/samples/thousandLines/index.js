@@ -31,6 +31,10 @@ const y2 = Math.floor(Math.random() * (state.maxY2 - state.minY2 + 1) + state.mi
  engine.add(l.pixiObj);   
     
 }
+
+////log number of children
+console.log("Total number of drawable components", engine.totalComps());
+
 }//draw lines fn
 
 drawLines();

@@ -46,6 +46,9 @@ export default class PixiEngine {
                 ); 
             }
     }
+    totalComps():number{
+    return this.app.stage.children.length;
+    }
 
 }
 
