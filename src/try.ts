@@ -1,4 +1,4 @@
-import { PixiEngine, Rect,Ellipse, dat } from "./index.js";
+import { PixiEngine, Rect,Circle, dat } from "./index.js";
 
 const engine = new PixiEngine("bilza", 800, 300, 0xb5af6c);
 
@@ -10,7 +10,7 @@ bgRect.color = 0x00ff00;
 engine.add(bgRect.pixiObj);
 //------------------------------
 
-const rect = new Ellipse(50, 25);
+const rect = new Circle(100);
 rect.color = 0xff0000;
 rect.x = 350;
 rect.y = 100;
@@ -54,8 +54,8 @@ const gui = new dat.GUI();
 const rectFolder = gui.addFolder("Rect Component");
 rectFolder.add(rect, "x", 1, 900).name("x");
 rectFolder.add(rect, "y", 1, 400).name("y");
-rectFolder.add(rect, "width", 1, 500).name("width");
-rectFolder.add(rect, "height", 1, 500).name("height");
+rectFolder.add(rect, "width", 1, 1000).name("width");
+rectFolder.add(rect, "height", 1, 500).name("height value").listen();
 rectFolder.add(rect, "opacity", 0, 1).name("opacity");
 rectFolder.add(rect, "angle", 0, 360).name("angle");
 rectFolder.add(rect, "angle", 0, 360).name("angle Value").listen();

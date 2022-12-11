@@ -1,4 +1,3 @@
-// import BaseGraphComp from "../boxGraphComp/graphWrapper";
 import BoxGraphComp from "../interfaces/boxGraphComp";
 /////////////////////////////////////////////
 

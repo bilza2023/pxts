@@ -1,69 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        #parnetDiv {
-            width: 100%;
-            padding: 15px;
-            background-color: rgb(22, 5, 65);
-        }
-
-        .codeDiv {
-            width: 80%;
-            margin-left: 10%;
-            margin-top: 5px;
-            background-color: rgb(222, 223, 202);
-        }
-
-
-        .hdg {
-            text-align: center;
-            overflow: visible;
-            width: 100%;
-            height: 100%;
-            margin-top: 5px;
-            padding: 6px;
-            background-color: #5D5DEF;
-        }
-
-        #bilza {
-            text-align: center;
-            overflow: visible;
-            width: 100%;
-            height: 100%;
-            margin-top: 5px;
-            background-color: rgb(1, 1, 45);
-        }
-    </style>
-    <script src="../../misc/prism.js"></script>
-    <link rel="stylesheet" href="../../misc/prism.css">
-
-    <title>Bilza Core Samples</title>
-</head>
-
-<body>
-    <br>
-    <br>
-    <div id="parnetDiv">
-        <div id="bilza"></div>
-    </div>
-
-    <script src="./index.js" type="module"></script>
-
-    <h2 class="hdg">Ellipse Example</h2>
-<div class="codeDiv">
-<pre class="language-javascript">
-<code >
-import { PixiEngine, Rect,Ellipse, dat } from "../pxts.js";
+import { PixiEngine, Rect,Circle, dat } from "../pxts.js";
 
 const engine = new PixiEngine("bilza", 800, 300, 0xb5af6c);
 
@@ -75,7 +10,7 @@ bgRect.color = 0x00ff00;
 engine.add(bgRect.pixiObj);
 //------------------------------
 
-const rect = new Ellipse(50, 25);
+const rect = new Circle(100);
 rect.color = 0xff0000;
 rect.x = 350;
 rect.y = 100;
@@ -89,7 +24,6 @@ engine.add(rect.pixiObj);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 class StateObj {
-
     constructor() {
         this.pivotX = 0;
         this.pivotY = 0;
@@ -117,8 +51,8 @@ const gui = new dat.GUI();
 const rectFolder = gui.addFolder("Rect Component");
 rectFolder.add(rect, "x", 1, 900).name("x");
 rectFolder.add(rect, "y", 1, 400).name("y");
-rectFolder.add(rect, "width", 1, 500).name("width");
-rectFolder.add(rect, "height", 1, 500).name("height");
+rectFolder.add(rect, "width", 1, 1000).name("width");
+rectFolder.add(rect, "height", 1, 500).name("height value").listen();
 rectFolder.add(rect, "opacity", 0, 1).name("opacity");
 rectFolder.add(rect, "angle", 0, 360).name("angle");
 rectFolder.add(rect, "angle", 0, 360).name("angle Value").listen();
@@ -143,10 +77,3 @@ rectFolder.add(rect, "pivotY", 0, 200).name("pivotY");
 
 rectFolder.addColor(rect, "color").name("color");
 rectFolder.open();
-</code>
-</pre>
-    </div>
-
-</body>
-
-</html>
