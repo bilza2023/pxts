@@ -15,4 +15,5 @@ At the moment the library has just a few components like rect , roundRect, circl
 <small>If you want to be in touch or send me a bug report please use github issues.</small>
 
 -----
-###### 11-dec-2022   (version 0.0.1) 
+###### 11-dec-2022   (version 0.0.2) 
+###### 08-dec-2022   (version 0.0.1) 
