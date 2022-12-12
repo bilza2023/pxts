@@ -1,4 +1,4 @@
-import BoxGraphComp from "../interfaces/boxGraphComp";
+import BoxGraphComp from "../coreComps/boxGraphComp";
 /////////////////////////////////////////////
 
 export default class Polygon extends BoxGraphComp {

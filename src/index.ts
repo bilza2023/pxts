@@ -15,6 +15,8 @@ import Text from "./textComp/text";
 //--dat gui
  import * as dat from 'dat.gui';
 
+//--sprites
+import Sprite from "./sprite/sprite";
 ////////////////////////////////
 export {
 PixEngine,
@@ -30,5 +32,7 @@ RoundRect,
 
 Text,
 
-dat
+dat,
+
+Sprite
 }

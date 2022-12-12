@@ -1,6 +1,6 @@
 // import BaseGraphComp from "../boxGraphComp/graphWrapper";
 /////////////////////////////////////////////
-import BoxGraphComp from "../interfaces/boxGraphComp";
+import BoxGraphComp from "../coreComps/boxGraphComp";
 
 export default class Rect extends BoxGraphComp {
     /////////////////////////////////////////

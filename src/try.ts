@@ -1,5 +1,5 @@
-import { PixEngine,Pixi, dat } from "./index.js";
-import {Sprite,AnimatedSprite} from "pixi.js";
+import {Sprite, PixEngine,Pixi, dat } from "./index.js";
+import {AnimatedSprite} from "pixi.js";
 
 const engine = new PixEngine("bilza", 800, 400, 0xb5af6c);
 engine.backgroundColor(0xffcccc);
@@ -20,7 +20,7 @@ const capguyFrames = [
 ];
 // const assets =  Assets();
 engine.loader()
-.add("background" ,"assets/background.png")
+.add("background", "assets/background.png")
     //--we can give it array of
 .add(capguyFrames)
 .load(setup);
@@ -31,7 +31,7 @@ function setup() {
 console.log(resources);
     // initialize background sprite
     background = new Sprite(resources["background"].texture);
-    engine.add(background);
+    engine.add(background.pixiObj);
 
     // scale stage container that it fits into the view
     app.stage.scale.x = app.view.width / background.width;
