@@ -1,9 +1,10 @@
-import { PixiEngine, dat } from "./index.js";
+import { PixEngine,Pixi, dat } from "./index.js";
 import {Sprite,AnimatedSprite} from "pixi.js";
 
-const engine = new PixiEngine("bilza", 800, 400, 0xb5af6c);
+const engine = new PixEngine("bilza", 800, 400, 0xb5af6c);
 engine.backgroundColor(0xffcccc);
 const app = engine.getApp();
+
 let background :Sprite;
 let animatedCapguy :AnimatedSprite;
 
@@ -18,8 +19,9 @@ const capguyFrames = [
     "assets/capguy/walk_08.png"
 ];
 
-engine.getApp().loader
+app.loader
     .add("assets/background.png")
+    //--we can give it array of
     .add(capguyFrames)
     .load(setup);
 
@@ -28,7 +30,7 @@ function setup() {
 
     // initialize background sprite
     background = new Sprite(resources["assets/background.png"].texture);
-    app.stage.addChild(background);
+    engine.add(background);
 
     // scale stage container that it fits into the view
     app.stage.scale.x = app.view.width / background.width;
@@ -43,7 +45,7 @@ function setup() {
     animatedCapguy.position.set(0, background.height - 350); // almost bottom-left corner of the canvas
     animatedCapguy.play();
 
-    app.stage.addChild(animatedCapguy);
+    engine.add(animatedCapguy);
         app.ticker.add(delta => gameLoop(delta));
 // highlight-end
 }
