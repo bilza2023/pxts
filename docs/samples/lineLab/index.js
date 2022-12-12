@@ -28,6 +28,7 @@ class StateObj {
         this.pivotX = 0;
         this.pivotY = 0;
         this.spin = false;
+        this.backgroundColor = 0xcccccc;
     }
 }
 ////////////////////////////////
@@ -70,6 +71,10 @@ rectFolder.add(state, "pivotX", [0, 1, 2]).onChange(() => {
     console.log("stateObj", state.pivotX);
     //@ts-expect-error
     rect.pivotXAlign(parseInt(state.pivotX));
+});
+
+rectFolder.addColor(state, "backgroundColor").name("backgroundColor").onChange(() => {
+    engine.backgroundColor(state.backgroundColor);
 });
 
 rectFolder.add(state, "pivotY", [0, 1, 2]).onChange(() => {
