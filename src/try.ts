@@ -18,18 +18,19 @@ const capguyFrames = [
     "assets/capguy/walk_07.png",
     "assets/capguy/walk_08.png"
 ];
-
-app.loader
-    .add("assets/background.png")
+// const assets =  Assets();
+engine.loader()
+.add("background" ,"assets/background.png")
     //--we can give it array of
-    .add(capguyFrames)
-    .load(setup);
+.add(capguyFrames)
+.load(setup);
 
+////////////////////////////////////
 function setup() {
-    let resources = app.loader.resources;
-
+    let resources = engine.resources();
+console.log(resources);
     // initialize background sprite
-    background = new Sprite(resources["assets/background.png"].texture);
+    background = new Sprite(resources["background"].texture);
     engine.add(background);
 
     // scale stage container that it fits into the view

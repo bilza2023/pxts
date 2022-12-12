@@ -1,4 +1,5 @@
-import { Application, DisplayObject, utils } from "pixi.js";
+import { Application, DisplayObject, utils,Ticker,Loader,LoaderResource } from "pixi.js";
+
 // import IGraphComp from "../baseGraphComp/IGraphComp";
 
 ///////////////////////////////////////////
@@ -35,6 +36,16 @@ export default class PixiEngine {
     }
     getApp():Application{
     return this.app;
+    }
+    ticker():Ticker{
+    return this.app.ticker;
+    }
+    loader():Loader{
+    return this.app.loader;
+    }
+    resources():LoaderResource{
+    //@ts-expect-error
+    return this.app.loader.resources;
     }
     add(comp: DisplayObject) {
         this.app.stage.addChild(comp);
