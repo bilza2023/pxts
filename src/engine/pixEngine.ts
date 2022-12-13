@@ -1,4 +1,4 @@
-import { Application, DisplayObject, utils } from "pixi.js";
+import { Application, DisplayObject, Texture, utils } from "pixi.js";
 
 ///////////////////////////////////////////
 export default class PixiEngine {
@@ -37,6 +37,12 @@ export default class PixiEngine {
     }
     add(comp: DisplayObject) {
         this.app.stage.addChild(comp);
+    }
+    getTexture(textureName:string):Texture{
+    const r = this.app.loader.resources[textureName].texture; 
+    if (r==null){throw new Error("texture not found");
+    }
+    return r;
     }
     destroy(){
         while(this.app.stage.children[0]) { 

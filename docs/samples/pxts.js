@@ -25067,6 +25067,13 @@ class PixiEngine {
   add(comp) {
     this.app.stage.addChild(comp);
   }
+  getTexture(textureName) {
+    const r = this.app.loader.resources[textureName].texture;
+    if (r == null) {
+      throw new Error("texture not found");
+    }
+    return r;
+  }
   destroy() {
     while (this.app.stage.children[0]) {
       this.app.stage.removeChild(
