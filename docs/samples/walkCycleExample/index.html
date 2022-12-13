@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="../../misc/prism.js"></script>
+    <link rel="stylesheet" href="../../misc/prism.css">
+    <link rel="stylesheet" href="../../misc/custom.css">
+    <!-- <link rel="stylesheet" href="../../misc/dark.css"> -->
+
+    <title>Pxts Samples</title>
+</head>
+
+<body>
+    <br>
+    <br>
+    <div id="parnetDiv">
+        <div id="bilza"></div>
+    </div>
+
+<script src="./index.js" type="module"></script>
+
+    <h2 class="hdg">Walk Cycle Example</h2>
+    <div class="codeDiv">
+        <pre class="language-javascript">
+<code >
+import { PixiEngine,Pixi } from "../pxts.js";
+
+
+const engine = new PixiEngine("bilza", 800, 400, 0xb5af6c);
+engine.backgroundColor(0xffcccc);
+
+const app = engine.getApp();
+
+let background ;
+let animatedCapguy ;
+
+const capguyFrames = [
+    "../../assets/capguy/walk_01.png",
+    "../../assets/capguy/walk_02.png",
+    "../../assets/capguy/walk_03.png",
+    "../../assets/capguy/walk_04.png",
+    "../../assets/capguy/walk_05.png",
+    "../../assets/capguy/walk_06.png",
+    "../../assets/capguy/walk_07.png",
+    "../../assets/capguy/walk_08.png"
+];
+
+
+app.loader
+.add("background", "../../assets/background.png")
+    //--we can give it array of
+.add(capguyFrames)
+.load(setup);
+
+////////////////////////////////////
+function setup() {
+
+background = new Pixi.Sprite( app.loader.resources["background"].texture);
+engine.add(background);
+    // scale stage container that it fits into the view
+    app.stage.scale.x = app.view.width / background.width;
+    app.stage.scale.y = app.view.height / background.height;
+    // create an animated sprite
+    animatedCapguy = Pixi.AnimatedSprite.fromFrames(capguyFrames);
+    // configure + start animation:
+    animatedCapguy.animationSpeed = 1/6;                  // 6 fps
+    animatedCapguy.position.set(0, background.height - 350); // almost bottom-left corner of the canvas
+    animatedCapguy.play();
+
+    engine.add(animatedCapguy);
+        app.ticker.add(delta => gameLoop(delta));
+// highlight-end
+}
+
+function gameLoop(delta) {
+    animatedCapguy.x = (animatedCapguy.x + 5*delta) % (background.width + 200);
+}
+</code>
+</pre>
+    </div>
+
+</body>
+
+</html>

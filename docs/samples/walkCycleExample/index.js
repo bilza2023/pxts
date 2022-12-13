@@ -1,4 +1,4 @@
-import { PixiEngine,Pixi } from "./index.js";
+import { PixiEngine,Pixi } from "../pxts.js";
 
 
 const engine = new PixiEngine("bilza", 800, 400, 0xb5af6c);
@@ -6,23 +6,23 @@ engine.backgroundColor(0xffcccc);
 
 const app = engine.getApp();
 
-let background :Pixi.Sprite;
-let animatedCapguy :Pixi.AnimatedSprite;
+let background ;
+let animatedCapguy ;
 
 const capguyFrames = [
-    "assets/capguy/walk_01.png",
-    "assets/capguy/walk_02.png",
-    "assets/capguy/walk_03.png",
-    "assets/capguy/walk_04.png",
-    "assets/capguy/walk_05.png",
-    "assets/capguy/walk_06.png",
-    "assets/capguy/walk_07.png",
-    "assets/capguy/walk_08.png"
+    "../../assets/capguy/walk_01.png",
+    "../../assets/capguy/walk_02.png",
+    "../../assets/capguy/walk_03.png",
+    "../../assets/capguy/walk_04.png",
+    "../../assets/capguy/walk_05.png",
+    "../../assets/capguy/walk_06.png",
+    "../../assets/capguy/walk_07.png",
+    "../../assets/capguy/walk_08.png"
 ];
 
 
 app.loader
-.add("background", "assets/background.png")
+.add("background", "../../assets/background.png")
     //--we can give it array of
 .add(capguyFrames)
 .load(setup);
@@ -47,6 +47,6 @@ engine.add(background);
 // highlight-end
 }
 
-function gameLoop(delta:number) {
+function gameLoop(delta) {
     animatedCapguy.x = (animatedCapguy.x + 5*delta) % (background.width + 200);
 }

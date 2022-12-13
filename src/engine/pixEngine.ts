@@ -1,6 +1,4 @@
-import { Application, DisplayObject, utils,Ticker,Loader,LoaderResource } from "pixi.js";
-
-// import IGraphComp from "../baseGraphComp/IGraphComp";
+import { Application, DisplayObject, utils } from "pixi.js";
 
 ///////////////////////////////////////////
 export default class PixiEngine {
@@ -36,16 +34,6 @@ export default class PixiEngine {
     }
     getApp():Application{
     return this.app;
-    }
-    ticker():Ticker{
-    return this.app.ticker;
-    }
-    loader():Loader{
-    return this.app.loader;
-    }
-    resources():LoaderResource{
-    //@ts-expect-error
-    return this.app.loader.resources;
     }
     add(comp: DisplayObject) {
         this.app.stage.addChild(comp);
@@ -92,25 +80,3 @@ function resizeCanvas(app: Application): void {
     /////////////////
     resize();
 }
-
-////////////////--loadGameAssets
-// async function loadGameAssets(): Promise<void> {
-//     return new Promise((res, rej) => {
-// const loader = Loader.shared;
-// loader.add("rabbit", "./assets/simpleSpriteSheet.json");
-// loader.add("pixie", "./assets/spine-assets/pixie.json");
-///////////////////
-// loader.add("capGuy", "./assets/capGuy/capGuy.json");
-
-///////////////////
-//         loader.onComplete.once(() => {
-//             res();
-//         });
-
-//         loader.onError.once(() => {
-//             rej();
-//         });
-
-//         loader.load();
-//     });
-// }

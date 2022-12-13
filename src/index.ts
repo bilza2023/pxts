@@ -1,5 +1,5 @@
 
-import PixEngine from "./engine/pixEngine";
+import PixEngine  from "./engine/pixEngine";
 import * as Pixi from "pixi.js";
 //-six Graphics Components
 import Rect from "./graphComps/rect";
@@ -19,7 +19,7 @@ import Text from "./textComp/text";
 import Sprite from "./sprite/sprite";
 ////////////////////////////////
 export {
-PixEngine,
+PixEngine as PixiEngine,
 Pixi,
 
 

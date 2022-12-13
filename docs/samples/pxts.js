@@ -2204,10 +2204,417 @@ var url = {
   format,
   resolve
 };
+function assertPath(path2) {
+  if (typeof path2 !== "string") {
+    throw new TypeError("Path must be a string. Received " + JSON.stringify(path2));
+  }
+}
+function removeUrlParams(url2) {
+  var re = url2.split("?")[0];
+  return re.split("#")[0];
+}
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
+}
+function normalizeStringPosix(path2, allowAboveRoot) {
+  var res = "";
+  var lastSegmentLength = 0;
+  var lastSlash = -1;
+  var dots = 0;
+  var code;
+  for (var i = 0; i <= path2.length; ++i) {
+    if (i < path2.length) {
+      code = path2.charCodeAt(i);
+    } else if (code === 47) {
+      break;
+    } else {
+      code = 47;
+    }
+    if (code === 47) {
+      if (lastSlash === i - 1 || dots === 1)
+        ;
+      else if (lastSlash !== i - 1 && dots === 2) {
+        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 || res.charCodeAt(res.length - 2) !== 46) {
+          if (res.length > 2) {
+            var lastSlashIndex = res.lastIndexOf("/");
+            if (lastSlashIndex !== res.length - 1) {
+              if (lastSlashIndex === -1) {
+                res = "";
+                lastSegmentLength = 0;
+              } else {
+                res = res.slice(0, lastSlashIndex);
+                lastSegmentLength = res.length - 1 - res.lastIndexOf("/");
+              }
+              lastSlash = i;
+              dots = 0;
+              continue;
+            }
+          } else if (res.length === 2 || res.length === 1) {
+            res = "";
+            lastSegmentLength = 0;
+            lastSlash = i;
+            dots = 0;
+            continue;
+          }
+        }
+        if (allowAboveRoot) {
+          if (res.length > 0) {
+            res += "/..";
+          } else {
+            res = "..";
+          }
+          lastSegmentLength = 2;
+        }
+      } else {
+        if (res.length > 0) {
+          res += "/" + path2.slice(lastSlash + 1, i);
+        } else {
+          res = path2.slice(lastSlash + 1, i);
+        }
+        lastSegmentLength = i - lastSlash - 1;
+      }
+      lastSlash = i;
+      dots = 0;
+    } else if (code === 46 && dots !== -1) {
+      ++dots;
+    } else {
+      dots = -1;
+    }
+  }
+  return res;
+}
+var path = {
+  toPosix: function(path2) {
+    return replaceAll(path2, "\\", "/");
+  },
+  isUrl: function(path2) {
+    return /^https?:/.test(this.toPosix(path2));
+  },
+  isDataUrl: function(path2) {
+    return /^data:([a-z]+\/[a-z0-9-+.]+(;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s<>]*?)$/i.test(path2);
+  },
+  hasProtocol: function(path2) {
+    return /^[^/:]+:\//.test(this.toPosix(path2));
+  },
+  getProtocol: function(path2) {
+    assertPath(path2);
+    path2 = this.toPosix(path2);
+    var protocol = "";
+    var isFile = /^file:\/\/\//.exec(path2);
+    var isHttp = /^[^/:]+:\/\//.exec(path2);
+    var isWindows = /^[^/:]+:\//.exec(path2);
+    if (isFile || isHttp || isWindows) {
+      var arr = (isFile === null || isFile === void 0 ? void 0 : isFile[0]) || (isHttp === null || isHttp === void 0 ? void 0 : isHttp[0]) || (isWindows === null || isWindows === void 0 ? void 0 : isWindows[0]);
+      protocol = arr;
+      path2 = path2.slice(arr.length);
+    }
+    return protocol;
+  },
+  toAbsolute: function(url2, customBaseUrl, customRootUrl) {
+    if (this.isDataUrl(url2)) {
+      return url2;
+    }
+    var baseUrl = removeUrlParams(this.toPosix(customBaseUrl !== null && customBaseUrl !== void 0 ? customBaseUrl : settings.ADAPTER.getBaseUrl()));
+    var rootUrl = removeUrlParams(this.toPosix(customRootUrl !== null && customRootUrl !== void 0 ? customRootUrl : this.rootname(baseUrl)));
+    assertPath(url2);
+    url2 = this.toPosix(url2);
+    if (url2.startsWith("/")) {
+      return path.join(rootUrl, url2.slice(1));
+    }
+    var absolutePath = this.isAbsolute(url2) ? url2 : this.join(baseUrl, url2);
+    return absolutePath;
+  },
+  normalize: function(path2) {
+    path2 = this.toPosix(path2);
+    assertPath(path2);
+    if (path2.length === 0) {
+      return ".";
+    }
+    var protocol = "";
+    var isAbsolute = path2.startsWith("/");
+    if (this.hasProtocol(path2)) {
+      protocol = this.rootname(path2);
+      path2 = path2.slice(protocol.length);
+    }
+    var trailingSeparator = path2.endsWith("/");
+    path2 = normalizeStringPosix(path2, false);
+    if (path2.length > 0 && trailingSeparator) {
+      path2 += "/";
+    }
+    if (isAbsolute) {
+      return "/" + path2;
+    }
+    return protocol + path2;
+  },
+  isAbsolute: function(path2) {
+    assertPath(path2);
+    path2 = this.toPosix(path2);
+    if (this.hasProtocol(path2)) {
+      return true;
+    }
+    return path2.startsWith("/");
+  },
+  join: function() {
+    var arguments$1 = arguments;
+    var _a2;
+    var segments = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      segments[_i] = arguments$1[_i];
+    }
+    if (segments.length === 0) {
+      return ".";
+    }
+    var joined;
+    for (var i = 0; i < segments.length; ++i) {
+      var arg = segments[i];
+      assertPath(arg);
+      if (arg.length > 0) {
+        if (joined === void 0) {
+          joined = arg;
+        } else {
+          var prevArg = (_a2 = segments[i - 1]) !== null && _a2 !== void 0 ? _a2 : "";
+          if (this.extname(prevArg)) {
+            joined += "/../" + arg;
+          } else {
+            joined += "/" + arg;
+          }
+        }
+      }
+    }
+    if (joined === void 0) {
+      return ".";
+    }
+    return this.normalize(joined);
+  },
+  dirname: function(path2) {
+    assertPath(path2);
+    if (path2.length === 0) {
+      return ".";
+    }
+    path2 = this.toPosix(path2);
+    var code = path2.charCodeAt(0);
+    var hasRoot = code === 47;
+    var end = -1;
+    var matchedSlash = true;
+    var proto = this.getProtocol(path2);
+    var origpath = path2;
+    path2 = path2.slice(proto.length);
+    for (var i = path2.length - 1; i >= 1; --i) {
+      code = path2.charCodeAt(i);
+      if (code === 47) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+        matchedSlash = false;
+      }
+    }
+    if (end === -1) {
+      return hasRoot ? "/" : this.isUrl(origpath) ? proto + path2 : proto;
+    }
+    if (hasRoot && end === 1) {
+      return "//";
+    }
+    return proto + path2.slice(0, end);
+  },
+  rootname: function(path2) {
+    assertPath(path2);
+    path2 = this.toPosix(path2);
+    var root = "";
+    if (path2.startsWith("/")) {
+      root = "/";
+    } else {
+      root = this.getProtocol(path2);
+    }
+    if (this.isUrl(path2)) {
+      var index2 = path2.indexOf("/", root.length);
+      if (index2 !== -1) {
+        root = path2.slice(0, index2);
+      } else {
+        root = path2;
+      }
+      if (!root.endsWith("/")) {
+        root += "/";
+      }
+    }
+    return root;
+  },
+  basename: function(path2, ext) {
+    assertPath(path2);
+    if (ext) {
+      assertPath(ext);
+    }
+    path2 = this.toPosix(path2);
+    var start = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i;
+    if (ext !== void 0 && ext.length > 0 && ext.length <= path2.length) {
+      if (ext.length === path2.length && ext === path2) {
+        return "";
+      }
+      var extIdx = ext.length - 1;
+      var firstNonSlashEnd = -1;
+      for (i = path2.length - 1; i >= 0; --i) {
+        var code = path2.charCodeAt(i);
+        if (code === 47) {
+          if (!matchedSlash) {
+            start = i + 1;
+            break;
+          }
+        } else {
+          if (firstNonSlashEnd === -1) {
+            matchedSlash = false;
+            firstNonSlashEnd = i + 1;
+          }
+          if (extIdx >= 0) {
+            if (code === ext.charCodeAt(extIdx)) {
+              if (--extIdx === -1) {
+                end = i;
+              }
+            } else {
+              extIdx = -1;
+              end = firstNonSlashEnd;
+            }
+          }
+        }
+      }
+      if (start === end) {
+        end = firstNonSlashEnd;
+      } else if (end === -1) {
+        end = path2.length;
+      }
+      return path2.slice(start, end);
+    }
+    for (i = path2.length - 1; i >= 0; --i) {
+      if (path2.charCodeAt(i) === 47) {
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+        matchedSlash = false;
+        end = i + 1;
+      }
+    }
+    if (end === -1) {
+      return "";
+    }
+    return path2.slice(start, end);
+  },
+  extname: function(path2) {
+    assertPath(path2);
+    path2 = this.toPosix(path2);
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var preDotState = 0;
+    for (var i = path2.length - 1; i >= 0; --i) {
+      var code = path2.charCodeAt(i);
+      if (code === 47) {
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+      if (end === -1) {
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46) {
+        if (startDot === -1) {
+          startDot = i;
+        } else if (preDotState !== 1) {
+          preDotState = 1;
+        }
+      } else if (startDot !== -1) {
+        preDotState = -1;
+      }
+    }
+    if (startDot === -1 || end === -1 || preDotState === 0 || preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      return "";
+    }
+    return path2.slice(startDot, end);
+  },
+  parse: function(path2) {
+    assertPath(path2);
+    var ret = { root: "", dir: "", base: "", ext: "", name: "" };
+    if (path2.length === 0) {
+      return ret;
+    }
+    path2 = this.toPosix(path2);
+    var code = path2.charCodeAt(0);
+    var isAbsolute = this.isAbsolute(path2);
+    var start;
+    ret.root = this.rootname(path2);
+    if (isAbsolute || this.hasProtocol(path2)) {
+      start = 1;
+    } else {
+      start = 0;
+    }
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i = path2.length - 1;
+    var preDotState = 0;
+    for (; i >= start; --i) {
+      code = path2.charCodeAt(i);
+      if (code === 47) {
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+      if (end === -1) {
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46) {
+        if (startDot === -1) {
+          startDot = i;
+        } else if (preDotState !== 1) {
+          preDotState = 1;
+        }
+      } else if (startDot !== -1) {
+        preDotState = -1;
+      }
+    }
+    if (startDot === -1 || end === -1 || preDotState === 0 || preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      if (end !== -1) {
+        if (startPart === 0 && isAbsolute) {
+          ret.base = ret.name = path2.slice(1, end);
+        } else {
+          ret.base = ret.name = path2.slice(startPart, end);
+        }
+      }
+    } else {
+      if (startPart === 0 && isAbsolute) {
+        ret.name = path2.slice(1, startDot);
+        ret.base = path2.slice(1, end);
+      } else {
+        ret.name = path2.slice(startPart, startDot);
+        ret.base = path2.slice(startPart, end);
+      }
+      ret.ext = path2.slice(startDot, end);
+    }
+    ret.dir = this.dirname(path2);
+    return ret;
+  },
+  sep: "/",
+  delimiter: ":"
+};
 settings.RETINA_PREFIX = /@([0-9\.]+)x/;
 settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = false;
 var saidHello = false;
-var VERSION = "6.5.8";
+var VERSION$1 = "6.5.8";
 function skipHello() {
   saidHello = true;
 }
@@ -2218,7 +2625,7 @@ function sayHello(type) {
   }
   if (settings.ADAPTER.getNavigator().userAgent.toLowerCase().indexOf("chrome") > -1) {
     var args = [
-      "\n %c %c %c PixiJS " + VERSION + " - ✰ " + type + " ✰  %c  %c  http://www.pixijs.com/  %c %c ♥%c♥%c♥ \n\n",
+      "\n %c %c %c PixiJS " + VERSION$1 + " - ✰ " + type + " ✰  %c  %c  http://www.pixijs.com/  %c %c ♥%c♥%c♥ \n\n",
       "background: #ff66a5; padding:5px 0;",
       "background: #ff66a5; padding:5px 0;",
       "color: #ff66a5; background: #030307; padding:5px 0;",
@@ -2231,7 +2638,7 @@ function sayHello(type) {
     ];
     (_a2 = globalThis.console).log.apply(_a2, args);
   } else if (globalThis.console) {
-    globalThis.console.log("PixiJS " + VERSION + " - " + type + " - http://www.pixijs.com/");
+    globalThis.console.log("PixiJS " + VERSION$1 + " - " + type + " - http://www.pixijs.com/");
   }
   saidHello = true;
 }
@@ -2586,6 +2993,9 @@ function string2hex(string) {
   }
   return parseInt(string, 16);
 }
+function rgb2hex(rgb) {
+  return (rgb[0] * 255 << 16) + (rgb[1] * 255 << 8) + (rgb[2] * 255 | 0);
+}
 function mapPremultipliedBlendModes() {
   var pm = [];
   var npm = [];
@@ -2688,6 +3098,35 @@ function getBufferType(array) {
   }
   return null;
 }
+var map$3 = { Float32Array, Uint32Array, Int32Array, Uint8Array };
+function interleaveTypedArrays$1(arrays, sizes) {
+  var outSize = 0;
+  var stride = 0;
+  var views = {};
+  for (var i = 0; i < arrays.length; i++) {
+    stride += sizes[i];
+    outSize += arrays[i].length;
+  }
+  var buffer = new ArrayBuffer(outSize * 4);
+  var out = null;
+  var littleOffset = 0;
+  for (var i = 0; i < arrays.length; i++) {
+    var size = sizes[i];
+    var array = arrays[i];
+    var type = getBufferType(array);
+    if (!views[type]) {
+      views[type] = new map$3[type](buffer);
+    }
+    out = views[type];
+    for (var j = 0; j < array.length; j++) {
+      var indexStart = (j / size | 0) * stride + littleOffset;
+      var index2 = j % size;
+      out[indexStart + index2] = array[j];
+    }
+    littleOffset += size;
+  }
+  return new Float32Array(buffer);
+}
 function nextPow2(v) {
   v += v === 0 ? 1 : 0;
   --v;
@@ -2765,6 +3204,24 @@ function deprecation(version, message, ignoreDepth) {
 var ProgramCache = {};
 var TextureCache = /* @__PURE__ */ Object.create(null);
 var BaseTextureCache = /* @__PURE__ */ Object.create(null);
+function destroyTextureCache() {
+  var key;
+  for (key in TextureCache) {
+    TextureCache[key].destroy();
+  }
+  for (key in BaseTextureCache) {
+    BaseTextureCache[key].destroy();
+  }
+}
+function clearTextureCache() {
+  var key;
+  for (key in TextureCache) {
+    delete TextureCache[key];
+  }
+  for (key in BaseTextureCache) {
+    delete BaseTextureCache[key];
+  }
+}
 var CanvasRenderTarget = function() {
   function CanvasRenderTarget2(width, height, resolution) {
     this.canvas = settings.ADAPTER.createCanvas();
@@ -2860,6 +3317,20 @@ function trimCanvas(canvas) {
     data
   };
 }
+var DATA_URI = /^\s*data:(?:([\w-]+)\/([\w+.-]+))?(?:;charset=([\w-]+))?(?:;(base64))?,(.*)/i;
+function decomposeDataUri(dataUri) {
+  var dataUriMatch = DATA_URI.exec(dataUri);
+  if (dataUriMatch) {
+    return {
+      mediaType: dataUriMatch[1] ? dataUriMatch[1].toLowerCase() : void 0,
+      subType: dataUriMatch[2] ? dataUriMatch[2].toLowerCase() : void 0,
+      charset: dataUriMatch[3] ? dataUriMatch[3].toLowerCase() : void 0,
+      encoding: dataUriMatch[4] ? dataUriMatch[4].toLowerCase() : void 0,
+      data: dataUriMatch[5]
+    };
+  }
+  return void 0;
+}
 var tempAnchor$1;
 function determineCrossOrigin(url$1, loc) {
   if (loc === void 0) {
@@ -2887,6 +3358,47 @@ function getResolutionOfUrl(url2, defaultValue2) {
   }
   return defaultValue2 !== void 0 ? defaultValue2 : 1;
 }
+const utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  BaseTextureCache,
+  CanvasRenderTarget,
+  DATA_URI,
+  ProgramCache,
+  TextureCache,
+  clearTextureCache,
+  correctBlendMode,
+  createIndicesForQuads,
+  decomposeDataUri,
+  deprecation,
+  destroyTextureCache,
+  determineCrossOrigin,
+  getBufferType,
+  getResolutionOfUrl,
+  hex2rgb,
+  hex2string,
+  interleaveTypedArrays: interleaveTypedArrays$1,
+  isPow2,
+  isWebGLSupported,
+  log2,
+  nextPow2,
+  path,
+  premultiplyBlendMode,
+  premultiplyRgba,
+  premultiplyTint,
+  premultiplyTintToRgba,
+  removeItems,
+  rgb2hex,
+  sayHello,
+  sign,
+  skipHello,
+  string2hex,
+  trimCanvas,
+  uid,
+  url,
+  isMobile,
+  EventEmitter,
+  earcut: earcut$1.exports
+}, Symbol.toStringTag, { value: "Module" }));
 var PI_2 = Math.PI * 2;
 var RAD_TO_DEG = 180 / Math.PI;
 var DEG_TO_RAD = Math.PI / 180;
@@ -4774,24 +5286,24 @@ var Container = function(_super) {
     }
   };
   Container2.prototype.renderAdvanced = function(renderer) {
-    var filters = this.filters;
+    var filters2 = this.filters;
     var mask = this._mask;
-    if (filters) {
+    if (filters2) {
       if (!this._enabledFilters) {
         this._enabledFilters = [];
       }
       this._enabledFilters.length = 0;
-      for (var i = 0; i < filters.length; i++) {
-        if (filters[i].enabled) {
-          this._enabledFilters.push(filters[i]);
+      for (var i = 0; i < filters2.length; i++) {
+        if (filters2[i].enabled) {
+          this._enabledFilters.push(filters2[i]);
         }
       }
     }
-    var flush = filters && this._enabledFilters && this._enabledFilters.length || mask && (!mask.isMaskData || mask.enabled && (mask.autoDetect || mask.type !== MASK_TYPES.NONE));
+    var flush = filters2 && this._enabledFilters && this._enabledFilters.length || mask && (!mask.isMaskData || mask.enabled && (mask.autoDetect || mask.type !== MASK_TYPES.NONE));
     if (flush) {
       renderer.batch.flush();
     }
-    if (filters && this._enabledFilters && this._enabledFilters.length) {
+    if (filters2 && this._enabledFilters && this._enabledFilters.length) {
       renderer.filter.push(this, this._enabledFilters);
     }
     if (mask) {
@@ -4811,7 +5323,7 @@ var Container = function(_super) {
     if (mask) {
       renderer.mask.pop(this);
     }
-    if (filters && this._enabledFilters && this._enabledFilters.length) {
+    if (filters2 && this._enabledFilters && this._enabledFilters.length) {
       renderer.filter.pop();
     }
   };
@@ -5887,17 +6399,17 @@ var AbstractMultiResource = function(_super) {
     _this.baseTexture = null;
     return _this;
   }
-  AbstractMultiResource2.prototype.initFromArray = function(resources, options) {
+  AbstractMultiResource2.prototype.initFromArray = function(resources2, options) {
     for (var i = 0; i < this.length; i++) {
-      if (!resources[i]) {
+      if (!resources2[i]) {
         continue;
       }
-      if (resources[i].castToBaseTexture) {
-        this.addBaseTextureAt(resources[i].castToBaseTexture(), i);
-      } else if (resources[i] instanceof Resource) {
-        this.addResourceAt(resources[i], i);
+      if (resources2[i].castToBaseTexture) {
+        this.addBaseTextureAt(resources2[i].castToBaseTexture(), i);
+      } else if (resources2[i] instanceof Resource) {
+        this.addResourceAt(resources2[i], i);
       } else {
-        this.addResourceAt(autoDetectResource(resources[i], options), i);
+        this.addResourceAt(autoDetectResource(resources2[i], options), i);
       }
     }
   };
@@ -5941,12 +6453,12 @@ var AbstractMultiResource = function(_super) {
     if (this._load) {
       return this._load;
     }
-    var resources = this.items.map(function(item) {
+    var resources2 = this.items.map(function(item) {
       return item.resource;
     }).filter(function(item) {
       return item;
     });
-    var promises = resources.map(function(item) {
+    var promises = resources2.map(function(item) {
       return item.load();
     });
     this._load = Promise.all(promises).then(function() {
@@ -6595,6 +7107,22 @@ var ImageBitmapResource = function(_super) {
   return ImageBitmapResource2;
 }(BaseImageResource);
 INSTALLED.push(ImageResource, ImageBitmapResource, CanvasResource, VideoResource, SVGResource, BufferResource, CubeResource, ArrayResource);
+var _resources = {
+  __proto__: null,
+  Resource,
+  BaseImageResource,
+  INSTALLED,
+  autoDetectResource,
+  AbstractMultiResource,
+  ArrayResource,
+  BufferResource,
+  CanvasResource,
+  CubeResource,
+  ImageResource,
+  SVGResource,
+  VideoResource,
+  ImageBitmapResource
+};
 var DepthResource = function(_super) {
   __extends$i(DepthResource2, _super);
   function DepthResource2() {
@@ -7783,19 +8311,19 @@ var FilterSystem = function() {
     this.forceClear = false;
     this.useMaxPadding = false;
   }
-  FilterSystem2.prototype.push = function(target, filters) {
+  FilterSystem2.prototype.push = function(target, filters2) {
     var _a2, _b2;
     var renderer = this.renderer;
     var filterStack = this.defaultFilterStack;
     var state = this.statePool.pop() || new FilterState();
     var renderTextureSystem = this.renderer.renderTexture;
-    var resolution = filters[0].resolution;
-    var multisample = filters[0].multisample;
-    var padding = filters[0].padding;
-    var autoFit = filters[0].autoFit;
-    var legacy = (_a2 = filters[0].legacy) !== null && _a2 !== void 0 ? _a2 : true;
-    for (var i = 1; i < filters.length; i++) {
-      var filter = filters[i];
+    var resolution = filters2[0].resolution;
+    var multisample = filters2[0].multisample;
+    var padding = filters2[0].padding;
+    var autoFit = filters2[0].autoFit;
+    var legacy = (_a2 = filters2[0].legacy) !== null && _a2 !== void 0 ? _a2 : true;
+    for (var i = 1; i < filters2.length; i++) {
+      var filter = filters2[i];
       resolution = Math.min(resolution, filter.resolution);
       multisample = Math.min(multisample, filter.multisample);
       padding = this.useMaxPadding ? Math.max(padding, filter.padding) : padding + filter.padding;
@@ -7828,7 +8356,7 @@ var FilterSystem = function() {
     }
     this.roundFrame(state.sourceFrame, renderTextureSystem.current ? renderTextureSystem.current.resolution : renderer.resolution, renderTextureSystem.sourceFrame, renderTextureSystem.destinationFrame, renderer.projection.transform);
     state.renderTexture = this.getOptimalFilterTexture(state.sourceFrame.width, state.sourceFrame.height, resolution, multisample);
-    state.filters = filters;
+    state.filters = filters2;
     state.destinationFrame.width = state.renderTexture.width;
     state.destinationFrame.height = state.renderTexture.height;
     var destinationFrame = this.tempRect;
@@ -7847,7 +8375,7 @@ var FilterSystem = function() {
   FilterSystem2.prototype.pop = function() {
     var filterStack = this.defaultFilterStack;
     var state = filterStack.pop();
-    var filters = state.filters;
+    var filters2 = state.filters;
     this.activeState = state;
     var globalUniforms = this.globalUniforms.uniforms;
     globalUniforms.outputFrame = state.sourceFrame;
@@ -7878,25 +8406,25 @@ var FilterSystem = function() {
     this.globalUniforms.update();
     var lastState = filterStack[filterStack.length - 1];
     this.renderer.framebuffer.blit();
-    if (filters.length === 1) {
-      filters[0].apply(this, state.renderTexture, lastState.renderTexture, CLEAR_MODES.BLEND, state);
+    if (filters2.length === 1) {
+      filters2[0].apply(this, state.renderTexture, lastState.renderTexture, CLEAR_MODES.BLEND, state);
       this.returnFilterTexture(state.renderTexture);
     } else {
       var flip = state.renderTexture;
       var flop = this.getOptimalFilterTexture(flip.width, flip.height, state.resolution);
       flop.filterFrame = flip.filterFrame;
       var i = 0;
-      for (i = 0; i < filters.length - 1; ++i) {
+      for (i = 0; i < filters2.length - 1; ++i) {
         if (i === 1 && state.multisample > 1) {
           flop = this.getOptimalFilterTexture(flip.width, flip.height, state.resolution);
           flop.filterFrame = flip.filterFrame;
         }
-        filters[i].apply(this, flip, flop, CLEAR_MODES.CLEAR, state);
+        filters2[i].apply(this, flip, flop, CLEAR_MODES.CLEAR, state);
         var t = flip;
         flip = flop;
         flop = t;
       }
-      filters[i].apply(this, flip, lastState.renderTexture, CLEAR_MODES.BLEND, state);
+      filters2[i].apply(this, flip, lastState.renderTexture, CLEAR_MODES.BLEND, state);
       if (i > 1 && state.multisample > 1) {
         this.returnFilterTexture(state.renderTexture);
       }
@@ -10422,6 +10950,11 @@ function generateUniformBufferSync(group, uniformData) {
     syncFunc: new Function("ud", "uv", "renderer", "syncData", "buffer", funcFragments.join("\n"))
   };
 }
+var IGLUniformData = function() {
+  function IGLUniformData2() {
+  }
+  return IGLUniformData2;
+}();
 var GLProgram = function() {
   function GLProgram2(program, uniformData) {
     this.program = program;
@@ -11113,6 +11646,23 @@ var TextureSystem = function() {
   };
   return TextureSystem2;
 }();
+var _systems = {
+  __proto__: null,
+  FilterSystem,
+  BatchSystem,
+  ContextSystem,
+  FramebufferSystem,
+  GeometrySystem,
+  MaskSystem,
+  ScissorSystem,
+  StencilSystem,
+  ProjectionSystem,
+  RenderTextureSystem,
+  ShaderSystem,
+  StateSystem,
+  TextureGCSystem,
+  TextureSystem
+};
 var tempMatrix = new Matrix();
 var AbstractRenderer = function(_super) {
   __extends$i(AbstractRenderer2, _super);
@@ -11520,6 +12070,16 @@ var $defaultVertex = "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCo
 var $defaultFilterVertex = "attribute vec2 aVertexPosition;\n\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\n\nuniform vec4 inputSize;\nuniform vec4 outputFrame;\n\nvec4 filterVertexPosition( void )\n{\n    vec2 position = aVertexPosition * max(outputFrame.zw, vec2(0.)) + outputFrame.xy;\n\n    return vec4((projectionMatrix * vec3(position, 1.0)).xy, 0.0, 1.0);\n}\n\nvec2 filterTextureCoord( void )\n{\n    return aVertexPosition * (outputFrame.zw * inputSize.zw);\n}\n\nvoid main(void)\n{\n    gl_Position = filterVertexPosition();\n    vTextureCoord = filterTextureCoord();\n}\n";
 var defaultVertex$1 = $defaultVertex;
 var defaultFilterVertex = $defaultFilterVertex;
+var System = function() {
+  function System2(renderer) {
+    deprecation("6.1.0", "System class is deprecated, implemement ISystem interface instead.");
+    this.renderer = renderer;
+  }
+  System2.prototype.destroy = function() {
+    this.renderer = null;
+  };
+  return System2;
+}();
 var BatchDrawCall = function() {
   function BatchDrawCall2() {
     this.texArray = null;
@@ -12037,6 +12597,31 @@ Object.assign(BatchRenderer, {
     type: ExtensionType.RendererPlugin
   }
 });
+var resources = {};
+var _loop_1 = function(name) {
+  Object.defineProperty(resources, name, {
+    get: function() {
+      deprecation("6.0.0", "PIXI.systems." + name + " has moved to PIXI." + name);
+      return _resources[name];
+    }
+  });
+};
+for (var name in _resources) {
+  _loop_1(name);
+}
+var systems = {};
+var _loop_2 = function(name) {
+  Object.defineProperty(systems, name, {
+    get: function() {
+      deprecation("6.0.0", "PIXI.resources." + name + " has moved to PIXI." + name);
+      return _systems[name];
+    }
+  });
+};
+for (var name in _systems) {
+  _loop_2(name);
+}
+var VERSION = "6.5.8";
 var accessibleTarget = {
   accessible: false,
   accessibleTitle: null,
@@ -15068,15 +15653,15 @@ var CompressedTextureLoader = function() {
   CompressedTextureLoader2.extension = ExtensionType.Loader;
   return CompressedTextureLoader2;
 }();
-function registerCompressedTextures(url2, resources, metadata) {
+function registerCompressedTextures(url2, resources2, metadata) {
   var result2 = {
     textures: {},
     texture: null
   };
-  if (!resources) {
+  if (!resources2) {
     return result2;
   }
-  var textures = resources.map(function(resource) {
+  var textures = resources2.map(function(resource) {
     return new Texture(new BaseTexture(resource, Object.assign({
       mipmap: MIPMAP_MODES.OFF,
       alphaMode: ALPHA_MODES.NO_PREMULTIPLIED_ALPHA
@@ -15643,9 +16228,9 @@ function __extends$f(d, b) {
   }
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-(function(_super) {
-  __extends$f(ParticleContainer, _super);
-  function ParticleContainer(maxSize, properties, batchSize, autoResize) {
+var ParticleContainer = function(_super) {
+  __extends$f(ParticleContainer2, _super);
+  function ParticleContainer2(maxSize, properties, batchSize, autoResize) {
     if (maxSize === void 0) {
       maxSize = 1500;
     }
@@ -15677,7 +16262,7 @@ function __extends$f(d, b) {
     _this.tint = 16777215;
     return _this;
   }
-  ParticleContainer.prototype.setProperties = function(properties) {
+  ParticleContainer2.prototype.setProperties = function(properties) {
     if (properties) {
       this._properties[0] = "vertices" in properties || "scale" in properties ? !!properties.vertices || !!properties.scale : this._properties[0];
       this._properties[1] = "position" in properties ? !!properties.position : this._properties[1];
@@ -15686,10 +16271,10 @@ function __extends$f(d, b) {
       this._properties[4] = "tint" in properties || "alpha" in properties ? !!properties.tint || !!properties.alpha : this._properties[4];
     }
   };
-  ParticleContainer.prototype.updateTransform = function() {
+  ParticleContainer2.prototype.updateTransform = function() {
     this.displayObjectUpdateTransform();
   };
-  Object.defineProperty(ParticleContainer.prototype, "tint", {
+  Object.defineProperty(ParticleContainer2.prototype, "tint", {
     get: function() {
       return this._tint;
     },
@@ -15700,7 +16285,7 @@ function __extends$f(d, b) {
     enumerable: false,
     configurable: true
   });
-  ParticleContainer.prototype.render = function(renderer) {
+  ParticleContainer2.prototype.render = function(renderer) {
     var _this = this;
     if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable) {
       return;
@@ -15716,14 +16301,14 @@ function __extends$f(d, b) {
     renderer.batch.setObjectRenderer(renderer.plugins.particle);
     renderer.plugins.particle.render(this);
   };
-  ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex) {
+  ParticleContainer2.prototype.onChildrenChange = function(smallestChildIndex) {
     var bufferIndex = Math.floor(smallestChildIndex / this._batchSize);
     while (this._bufferUpdateIDs.length < bufferIndex) {
       this._bufferUpdateIDs.push(0);
     }
     this._bufferUpdateIDs[bufferIndex] = ++this._updateID;
   };
-  ParticleContainer.prototype.dispose = function() {
+  ParticleContainer2.prototype.dispose = function() {
     if (this._buffers) {
       for (var i = 0; i < this._buffers.length; ++i) {
         this._buffers[i].destroy();
@@ -15731,15 +16316,15 @@ function __extends$f(d, b) {
       this._buffers = null;
     }
   };
-  ParticleContainer.prototype.destroy = function(options) {
+  ParticleContainer2.prototype.destroy = function(options) {
     _super.prototype.destroy.call(this, options);
     this.dispose();
     this._properties = null;
     this._buffers = null;
     this._bufferUpdateIDs = null;
   };
-  return ParticleContainer;
-})(Container);
+  return ParticleContainer2;
+}(Container);
 var ParticleBuffer = function() {
   function ParticleBuffer2(properties, dynamicPropertyFlags, size) {
     this.geometry = new Geometry();
@@ -17757,20 +18342,20 @@ var Graphics = function(_super) {
   };
   Graphics2.prototype.drawPolygon = function() {
     var arguments$1 = arguments;
-    var path = [];
+    var path2 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
-      path[_i] = arguments$1[_i];
+      path2[_i] = arguments$1[_i];
     }
     var points;
     var closeStroke = true;
-    var poly = path[0];
+    var poly = path2[0];
     if (poly.points) {
       closeStroke = poly.closeStroke;
       points = poly.points;
-    } else if (Array.isArray(path[0])) {
-      points = path[0];
+    } else if (Array.isArray(path2[0])) {
+      points = path2[0];
     } else {
-      points = path;
+      points = path2;
     }
     var shape = new Polygon$1(points);
     shape.closeStroke = closeStroke;
@@ -17999,6 +18584,20 @@ var Graphics = function(_super) {
   Graphics2._TEMP_POINT = new Point();
   return Graphics2;
 }(Container);
+var graphicsUtils = {
+  buildPoly,
+  buildCircle,
+  buildRectangle,
+  buildRoundedRectangle,
+  buildLine,
+  ArcUtils,
+  BezierUtils,
+  QuadraticUtils,
+  BatchPart,
+  FILL_COMMANDS,
+  BATCH_POOL,
+  DRAW_CALL_POOL
+};
 var extendStatics$d = function(d, b) {
   extendStatics$d = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -18020,7 +18619,7 @@ function __extends$d(d, b) {
 }
 var tempPoint$2 = new Point();
 var indices = new Uint16Array([0, 1, 2, 0, 2, 3]);
-var Sprite = function(_super) {
+var Sprite$1 = function(_super) {
   __extends$d(Sprite2, _super);
   function Sprite2(texture) {
     var _this = _super.call(this) || this;
@@ -19535,7 +20134,7 @@ var Text$1 = function(_super) {
   Text2.nextLineHeightBehavior = false;
   Text2.experimentalLetterSpacing = false;
   return Text2;
-}(Sprite);
+}(Sprite$1);
 settings.UPLOADS_PER_FRAME = 4;
 var extendStatics$b = function(d, b) {
   extendStatics$b = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
@@ -19820,6 +20419,19 @@ var Prepare = function(_super) {
   };
   return Prepare2;
 }(BasePrepare);
+var TimeLimiter = function() {
+  function TimeLimiter2(maxMilliseconds) {
+    this.maxMilliseconds = maxMilliseconds;
+    this.frameStart = 0;
+  }
+  TimeLimiter2.prototype.beginFrame = function() {
+    this.frameStart = Date.now();
+  };
+  TimeLimiter2.prototype.allowedToUpload = function() {
+    return Date.now() - this.frameStart < this.maxMilliseconds;
+  };
+  return TimeLimiter2;
+}();
 var Spritesheet = function() {
   function Spritesheet2(texture, data, resolutionFilename) {
     if (resolutionFilename === void 0) {
@@ -19963,7 +20575,7 @@ var SpritesheetLoader = function() {
     }
     var multiPacks = (_b2 = (_a2 = resource.data) === null || _a2 === void 0 ? void 0 : _a2.meta) === null || _b2 === void 0 ? void 0 : _b2.related_multi_packs;
     if (Array.isArray(multiPacks)) {
-      var _loop_1 = function(item2) {
+      var _loop_12 = function(item2) {
         if (typeof item2 !== "string") {
           return "continue";
         }
@@ -19985,7 +20597,7 @@ var SpritesheetLoader = function() {
       };
       for (var _i = 0, multiPacks_1 = multiPacks; _i < multiPacks_1.length; _i++) {
         var item = multiPacks_1[_i];
-        _loop_1(item);
+        _loop_12(item);
       }
     }
     var loadOptions = {
@@ -20036,9 +20648,9 @@ function __extends$a(d, b) {
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 var tempPoint$1 = new Point();
-(function(_super) {
-  __extends$a(TilingSprite, _super);
-  function TilingSprite(texture, width, height) {
+var TilingSprite = function(_super) {
+  __extends$a(TilingSprite2, _super);
+  function TilingSprite2(texture, width, height) {
     if (width === void 0) {
       width = 100;
     }
@@ -20054,7 +20666,7 @@ var tempPoint$1 = new Point();
     _this.uvRespectAnchor = false;
     return _this;
   }
-  Object.defineProperty(TilingSprite.prototype, "clampMargin", {
+  Object.defineProperty(TilingSprite2.prototype, "clampMargin", {
     get: function() {
       return this.uvMatrix.clampMargin;
     },
@@ -20065,7 +20677,7 @@ var tempPoint$1 = new Point();
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(TilingSprite.prototype, "tileScale", {
+  Object.defineProperty(TilingSprite2.prototype, "tileScale", {
     get: function() {
       return this.tileTransform.scale;
     },
@@ -20075,7 +20687,7 @@ var tempPoint$1 = new Point();
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(TilingSprite.prototype, "tilePosition", {
+  Object.defineProperty(TilingSprite2.prototype, "tilePosition", {
     get: function() {
       return this.tileTransform.position;
     },
@@ -20085,13 +20697,13 @@ var tempPoint$1 = new Point();
     enumerable: false,
     configurable: true
   });
-  TilingSprite.prototype._onTextureUpdate = function() {
+  TilingSprite2.prototype._onTextureUpdate = function() {
     if (this.uvMatrix) {
       this.uvMatrix.texture = this._texture;
     }
     this._cachedTint = 16777215;
   };
-  TilingSprite.prototype._render = function(renderer) {
+  TilingSprite2.prototype._render = function(renderer) {
     var texture = this._texture;
     if (!texture || !texture.valid) {
       return;
@@ -20101,14 +20713,14 @@ var tempPoint$1 = new Point();
     renderer.batch.setObjectRenderer(renderer.plugins[this.pluginName]);
     renderer.plugins[this.pluginName].render(this);
   };
-  TilingSprite.prototype._calculateBounds = function() {
+  TilingSprite2.prototype._calculateBounds = function() {
     var minX = this._width * -this._anchor._x;
     var minY = this._height * -this._anchor._y;
     var maxX = this._width * (1 - this._anchor._x);
     var maxY = this._height * (1 - this._anchor._y);
     this._bounds.addFrame(this.transform, minX, minY, maxX, maxY);
   };
-  TilingSprite.prototype.getLocalBounds = function(rect) {
+  TilingSprite2.prototype.getLocalBounds = function(rect) {
     if (this.children.length === 0) {
       this._bounds.minX = this._width * -this._anchor._x;
       this._bounds.minY = this._height * -this._anchor._y;
@@ -20124,7 +20736,7 @@ var tempPoint$1 = new Point();
     }
     return _super.prototype.getLocalBounds.call(this, rect);
   };
-  TilingSprite.prototype.containsPoint = function(point) {
+  TilingSprite2.prototype.containsPoint = function(point) {
     this.worldTransform.applyInverse(point, tempPoint$1);
     var width = this._width;
     var height = this._height;
@@ -20137,16 +20749,16 @@ var tempPoint$1 = new Point();
     }
     return false;
   };
-  TilingSprite.prototype.destroy = function(options) {
+  TilingSprite2.prototype.destroy = function(options) {
     _super.prototype.destroy.call(this, options);
     this.tileTransform = null;
     this.uvMatrix = null;
   };
-  TilingSprite.from = function(source, options) {
+  TilingSprite2.from = function(source, options) {
     var texture = source instanceof Texture ? source : Texture.from(source, options);
-    return new TilingSprite(texture, options.width, options.height);
+    return new TilingSprite2(texture, options.width, options.height);
   };
-  Object.defineProperty(TilingSprite.prototype, "width", {
+  Object.defineProperty(TilingSprite2.prototype, "width", {
     get: function() {
       return this._width;
     },
@@ -20156,7 +20768,7 @@ var tempPoint$1 = new Point();
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(TilingSprite.prototype, "height", {
+  Object.defineProperty(TilingSprite2.prototype, "height", {
     get: function() {
       return this._height;
     },
@@ -20166,8 +20778,8 @@ var tempPoint$1 = new Point();
     enumerable: false,
     configurable: true
   });
-  return TilingSprite;
-})(Sprite);
+  return TilingSprite2;
+}(Sprite$1);
 var fragmentSimpleSrc = "#version 100\n#define SHADER_NAME Tiling-Sprite-Simple-100\n\nprecision lowp float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform vec4 uColor;\n\nvoid main(void)\n{\n    vec4 texSample = texture2D(uSampler, vTextureCoord);\n    gl_FragColor = texSample * uColor;\n}\n";
 var gl1VertexSrc = "#version 100\n#define SHADER_NAME Tiling-Sprite-100\n\nprecision lowp float;\n\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\n\nuniform mat3 projectionMatrix;\nuniform mat3 translationMatrix;\nuniform mat3 uTransform;\n\nvarying vec2 vTextureCoord;\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n\n    vTextureCoord = (uTransform * vec3(aTextureCoord, 1.0)).xy;\n}\n";
 var gl1FragmentSrc = "#version 100\n#ifdef GL_EXT_shader_texture_lod\n    #extension GL_EXT_shader_texture_lod : enable\n#endif\n#define SHADER_NAME Tiling-Sprite-100\n\nprecision lowp float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform vec4 uColor;\nuniform mat3 uMapCoord;\nuniform vec4 uClampFrame;\nuniform vec2 uClampOffset;\n\nvoid main(void)\n{\n    vec2 coord = vTextureCoord + ceil(uClampOffset - vTextureCoord);\n    coord = (uMapCoord * vec3(coord, 1.0)).xy;\n    vec2 unclamped = coord;\n    coord = clamp(coord, uClampFrame.xy, uClampFrame.zw);\n\n    #ifdef GL_EXT_shader_texture_lod\n        vec4 texSample = unclamped == coord\n            ? texture2D(uSampler, coord) \n            : texture2DLodEXT(uSampler, coord, 0);\n    #else\n        vec4 texSample = texture2D(uSampler, coord);\n    #endif\n\n    gl_FragColor = texSample * uColor;\n}\n";
@@ -21198,15 +21810,15 @@ var msdfVert = "// Mesh material default fragment\r\nattribute vec2 aVertexPosit
 var pageMeshDataDefaultPageMeshData = [];
 var pageMeshDataMSDFPageMeshData = [];
 var charRenderDataPool = [];
-(function(_super) {
-  __extends$8(BitmapText, _super);
-  function BitmapText(text, style) {
+var BitmapText = function(_super) {
+  __extends$8(BitmapText2, _super);
+  function BitmapText2(text, style) {
     if (style === void 0) {
       style = {};
     }
     var _this = _super.call(this) || this;
     _this._tint = 16777215;
-    var _a2 = Object.assign({}, BitmapText.styleDefaults, style), align = _a2.align, tint = _a2.tint, maxWidth = _a2.maxWidth, letterSpacing = _a2.letterSpacing, fontName = _a2.fontName, fontSize = _a2.fontSize;
+    var _a2 = Object.assign({}, BitmapText2.styleDefaults, style), align = _a2.align, tint = _a2.tint, maxWidth = _a2.maxWidth, letterSpacing = _a2.letterSpacing, fontName = _a2.fontName, fontSize = _a2.fontSize;
     if (!BitmapFont.available[fontName]) {
       throw new Error('Missing BitmapFont "' + fontName + '"');
     }
@@ -21232,7 +21844,7 @@ var charRenderDataPool = [];
     _this._textureCache = {};
     return _this;
   }
-  BitmapText.prototype.updateText = function() {
+  BitmapText2.prototype.updateText = function() {
     var _a2;
     var data = BitmapFont.available[this._fontName];
     var fontSize = this.fontSize;
@@ -21483,11 +22095,11 @@ var charRenderDataPool = [];
     this._font = data;
     this.dirty = false;
   };
-  BitmapText.prototype.updateTransform = function() {
+  BitmapText2.prototype.updateTransform = function() {
     this.validate();
     this.containerUpdateTransform();
   };
-  BitmapText.prototype._render = function(renderer) {
+  BitmapText2.prototype._render = function(renderer) {
     if (this._autoResolution && this._resolution !== renderer.resolution) {
       this._resolution = renderer.resolution;
       this.dirty = true;
@@ -21506,11 +22118,11 @@ var charRenderDataPool = [];
     }
     _super.prototype._render.call(this, renderer);
   };
-  BitmapText.prototype.getLocalBounds = function() {
+  BitmapText2.prototype.getLocalBounds = function() {
     this.validate();
     return _super.prototype.getLocalBounds.call(this);
   };
-  BitmapText.prototype.validate = function() {
+  BitmapText2.prototype.validate = function() {
     var font = BitmapFont.available[this._fontName];
     if (!font) {
       throw new Error('Missing BitmapFont "' + this._fontName + '"');
@@ -21522,7 +22134,7 @@ var charRenderDataPool = [];
       this.updateText();
     }
   };
-  Object.defineProperty(BitmapText.prototype, "tint", {
+  Object.defineProperty(BitmapText2.prototype, "tint", {
     get: function() {
       return this._tint;
     },
@@ -21538,7 +22150,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "align", {
+  Object.defineProperty(BitmapText2.prototype, "align", {
     get: function() {
       return this._align;
     },
@@ -21551,7 +22163,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "fontName", {
+  Object.defineProperty(BitmapText2.prototype, "fontName", {
     get: function() {
       return this._fontName;
     },
@@ -21567,7 +22179,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "fontSize", {
+  Object.defineProperty(BitmapText2.prototype, "fontSize", {
     get: function() {
       var _a2;
       return (_a2 = this._fontSize) !== null && _a2 !== void 0 ? _a2 : BitmapFont.available[this._fontName].size;
@@ -21581,7 +22193,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "anchor", {
+  Object.defineProperty(BitmapText2.prototype, "anchor", {
     get: function() {
       return this._anchor;
     },
@@ -21595,7 +22207,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "text", {
+  Object.defineProperty(BitmapText2.prototype, "text", {
     get: function() {
       return this._text;
     },
@@ -21610,7 +22222,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "maxWidth", {
+  Object.defineProperty(BitmapText2.prototype, "maxWidth", {
     get: function() {
       return this._maxWidth;
     },
@@ -21624,7 +22236,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "maxLineHeight", {
+  Object.defineProperty(BitmapText2.prototype, "maxLineHeight", {
     get: function() {
       this.validate();
       return this._maxLineHeight;
@@ -21632,7 +22244,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "textWidth", {
+  Object.defineProperty(BitmapText2.prototype, "textWidth", {
     get: function() {
       this.validate();
       return this._textWidth;
@@ -21640,7 +22252,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "letterSpacing", {
+  Object.defineProperty(BitmapText2.prototype, "letterSpacing", {
     get: function() {
       return this._letterSpacing;
     },
@@ -21653,7 +22265,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "roundPixels", {
+  Object.defineProperty(BitmapText2.prototype, "roundPixels", {
     get: function() {
       return this._roundPixels;
     },
@@ -21666,7 +22278,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "textHeight", {
+  Object.defineProperty(BitmapText2.prototype, "textHeight", {
     get: function() {
       this.validate();
       return this._textHeight;
@@ -21674,7 +22286,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BitmapText.prototype, "resolution", {
+  Object.defineProperty(BitmapText2.prototype, "resolution", {
     get: function() {
       return this._resolution;
     },
@@ -21689,7 +22301,7 @@ var charRenderDataPool = [];
     enumerable: false,
     configurable: true
   });
-  BitmapText.prototype.destroy = function(options) {
+  BitmapText2.prototype.destroy = function(options) {
     var _textureCache = this._textureCache;
     var data = BitmapFont.available[this._fontName];
     var pageMeshDataPool = data.distanceFieldType === "none" ? pageMeshDataDefaultPageMeshData : pageMeshDataMSDFPageMeshData;
@@ -21713,14 +22325,14 @@ var charRenderDataPool = [];
     this._textureCache = null;
     _super.prototype.destroy.call(this, options);
   };
-  BitmapText.styleDefaults = {
+  BitmapText2.styleDefaults = {
     align: "left",
     tint: 16777215,
     maxWidth: 0,
     letterSpacing: 0
   };
-  return BitmapText;
-})(Container);
+  return BitmapText2;
+}(Container);
 var BitmapFontLoader = function() {
   function BitmapFontLoader2() {
   }
@@ -21821,9 +22433,9 @@ function __extends$7(d, b) {
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 var fragment$4 = "varying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform float uAlpha;\n\nvoid main(void)\n{\n   gl_FragColor = texture2D(uSampler, vTextureCoord) * uAlpha;\n}\n";
-(function(_super) {
-  __extends$7(AlphaFilter, _super);
-  function AlphaFilter(alpha) {
+var AlphaFilter = function(_super) {
+  __extends$7(AlphaFilter2, _super);
+  function AlphaFilter2(alpha) {
     if (alpha === void 0) {
       alpha = 1;
     }
@@ -21831,7 +22443,7 @@ var fragment$4 = "varying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nun
     _this.alpha = alpha;
     return _this;
   }
-  Object.defineProperty(AlphaFilter.prototype, "alpha", {
+  Object.defineProperty(AlphaFilter2.prototype, "alpha", {
     get: function() {
       return this.uniforms.uAlpha;
     },
@@ -21841,8 +22453,8 @@ var fragment$4 = "varying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nun
     enumerable: false,
     configurable: true
   });
-  return AlphaFilter;
-})(Filter);
+  return AlphaFilter2;
+}(Filter);
 var extendStatics$6 = function(d, b) {
   extendStatics$6 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -22014,9 +22626,9 @@ var BlurFilterPass = function(_super) {
   });
   return BlurFilterPass2;
 }(Filter);
-(function(_super) {
-  __extends$6(BlurFilter, _super);
-  function BlurFilter(strength, quality, resolution, kernelSize) {
+var BlurFilter = function(_super) {
+  __extends$6(BlurFilter2, _super);
+  function BlurFilter2(strength, quality, resolution, kernelSize) {
     if (strength === void 0) {
       strength = 8;
     }
@@ -22038,7 +22650,7 @@ var BlurFilterPass = function(_super) {
     _this.repeatEdgePixels = false;
     return _this;
   }
-  BlurFilter.prototype.apply = function(filterManager, input, output, clearMode) {
+  BlurFilter2.prototype.apply = function(filterManager, input, output, clearMode) {
     var xStrength = Math.abs(this.blurXFilter.strength);
     var yStrength = Math.abs(this.blurYFilter.strength);
     if (xStrength && yStrength) {
@@ -22052,14 +22664,14 @@ var BlurFilterPass = function(_super) {
       this.blurXFilter.apply(filterManager, input, output, clearMode);
     }
   };
-  BlurFilter.prototype.updatePadding = function() {
+  BlurFilter2.prototype.updatePadding = function() {
     if (this._repeatEdgePixels) {
       this.padding = 0;
     } else {
       this.padding = Math.max(Math.abs(this.blurXFilter.strength), Math.abs(this.blurYFilter.strength)) * 2;
     }
   };
-  Object.defineProperty(BlurFilter.prototype, "blur", {
+  Object.defineProperty(BlurFilter2.prototype, "blur", {
     get: function() {
       return this.blurXFilter.blur;
     },
@@ -22070,7 +22682,7 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BlurFilter.prototype, "quality", {
+  Object.defineProperty(BlurFilter2.prototype, "quality", {
     get: function() {
       return this.blurXFilter.quality;
     },
@@ -22080,7 +22692,7 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BlurFilter.prototype, "blurX", {
+  Object.defineProperty(BlurFilter2.prototype, "blurX", {
     get: function() {
       return this.blurXFilter.blur;
     },
@@ -22091,7 +22703,7 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BlurFilter.prototype, "blurY", {
+  Object.defineProperty(BlurFilter2.prototype, "blurY", {
     get: function() {
       return this.blurYFilter.blur;
     },
@@ -22102,7 +22714,7 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BlurFilter.prototype, "blendMode", {
+  Object.defineProperty(BlurFilter2.prototype, "blendMode", {
     get: function() {
       return this.blurYFilter.blendMode;
     },
@@ -22112,7 +22724,7 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(BlurFilter.prototype, "repeatEdgePixels", {
+  Object.defineProperty(BlurFilter2.prototype, "repeatEdgePixels", {
     get: function() {
       return this._repeatEdgePixels;
     },
@@ -22123,8 +22735,8 @@ var BlurFilterPass = function(_super) {
     enumerable: false,
     configurable: true
   });
-  return BlurFilter;
-})(Filter);
+  return BlurFilter2;
+}(Filter);
 var extendStatics$5 = function(d, b) {
   extendStatics$5 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -22803,9 +23415,9 @@ function __extends$4(d, b) {
 }
 var fragment$2 = "varying vec2 vFilterCoord;\nvarying vec2 vTextureCoord;\n\nuniform vec2 scale;\nuniform mat2 rotation;\nuniform sampler2D uSampler;\nuniform sampler2D mapSampler;\n\nuniform highp vec4 inputSize;\nuniform vec4 inputClamp;\n\nvoid main(void)\n{\n  vec4 map =  texture2D(mapSampler, vFilterCoord);\n\n  map -= 0.5;\n  map.xy = scale * inputSize.zw * (rotation * map.xy);\n\n  gl_FragColor = texture2D(uSampler, clamp(vec2(vTextureCoord.x + map.x, vTextureCoord.y + map.y), inputClamp.xy, inputClamp.zw));\n}\n";
 var vertex$1 = "attribute vec2 aVertexPosition;\n\nuniform mat3 projectionMatrix;\nuniform mat3 filterMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vFilterCoord;\n\nuniform vec4 inputSize;\nuniform vec4 outputFrame;\n\nvec4 filterVertexPosition( void )\n{\n    vec2 position = aVertexPosition * max(outputFrame.zw, vec2(0.)) + outputFrame.xy;\n\n    return vec4((projectionMatrix * vec3(position, 1.0)).xy, 0.0, 1.0);\n}\n\nvec2 filterTextureCoord( void )\n{\n    return aVertexPosition * (outputFrame.zw * inputSize.zw);\n}\n\nvoid main(void)\n{\n	gl_Position = filterVertexPosition();\n	vTextureCoord = filterTextureCoord();\n	vFilterCoord = ( filterMatrix * vec3( vTextureCoord, 1.0)  ).xy;\n}\n";
-(function(_super) {
-  __extends$4(DisplacementFilter, _super);
-  function DisplacementFilter(sprite, scale) {
+var DisplacementFilter = function(_super) {
+  __extends$4(DisplacementFilter2, _super);
+  function DisplacementFilter2(sprite, scale) {
     var _this = this;
     var maskMatrix = new Matrix();
     sprite.renderable = false;
@@ -22823,7 +23435,7 @@ var vertex$1 = "attribute vec2 aVertexPosition;\n\nuniform mat3 projectionMatrix
     _this.scale = new Point(scale, scale);
     return _this;
   }
-  DisplacementFilter.prototype.apply = function(filterManager, input, output, clearMode) {
+  DisplacementFilter2.prototype.apply = function(filterManager, input, output, clearMode) {
     this.uniforms.filterMatrix = filterManager.calculateSpriteMatrix(this.maskMatrix, this.maskSprite);
     this.uniforms.scale.x = this.scale.x;
     this.uniforms.scale.y = this.scale.y;
@@ -22838,7 +23450,7 @@ var vertex$1 = "attribute vec2 aVertexPosition;\n\nuniform mat3 projectionMatrix
     }
     filterManager.applyFilter(this, input, output, clearMode);
   };
-  Object.defineProperty(DisplacementFilter.prototype, "map", {
+  Object.defineProperty(DisplacementFilter2.prototype, "map", {
     get: function() {
       return this.uniforms.mapSampler;
     },
@@ -22848,8 +23460,8 @@ var vertex$1 = "attribute vec2 aVertexPosition;\n\nuniform mat3 projectionMatrix
     enumerable: false,
     configurable: true
   });
-  return DisplacementFilter;
-})(Filter);
+  return DisplacementFilter2;
+}(Filter);
 var extendStatics$3 = function(d, b) {
   extendStatics$3 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -22992,13 +23604,13 @@ void main() {
       gl_FragColor = color;
 }
 `;
-(function(_super) {
-  __extends$3(FXAAFilter, _super);
-  function FXAAFilter() {
+var FXAAFilter = function(_super) {
+  __extends$3(FXAAFilter2, _super);
+  function FXAAFilter2() {
     return _super.call(this, vertex, fragment$1) || this;
   }
-  return FXAAFilter;
-})(Filter);
+  return FXAAFilter2;
+}(Filter);
 var extendStatics$2 = function(d, b) {
   extendStatics$2 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -23019,9 +23631,9 @@ function __extends$2(d, b) {
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 var fragment = "precision highp float;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform float uNoise;\nuniform float uSeed;\nuniform sampler2D uSampler;\n\nfloat rand(vec2 co)\n{\n    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);\n}\n\nvoid main()\n{\n    vec4 color = texture2D(uSampler, vTextureCoord);\n    float randomValue = rand(gl_FragCoord.xy * uSeed);\n    float diff = (randomValue - 0.5) * uNoise;\n\n    // Un-premultiply alpha before applying the color matrix. See issue #3539.\n    if (color.a > 0.0) {\n        color.rgb /= color.a;\n    }\n\n    color.r += diff;\n    color.g += diff;\n    color.b += diff;\n\n    // Premultiply alpha again.\n    color.rgb *= color.a;\n\n    gl_FragColor = color;\n}\n";
-(function(_super) {
-  __extends$2(NoiseFilter, _super);
-  function NoiseFilter(noise, seed) {
+var NoiseFilter = function(_super) {
+  __extends$2(NoiseFilter2, _super);
+  function NoiseFilter2(noise, seed) {
     if (noise === void 0) {
       noise = 0.5;
     }
@@ -23036,7 +23648,7 @@ var fragment = "precision highp float;\n\nvarying vec2 vTextureCoord;\nvarying v
     _this.seed = seed;
     return _this;
   }
-  Object.defineProperty(NoiseFilter.prototype, "noise", {
+  Object.defineProperty(NoiseFilter2.prototype, "noise", {
     get: function() {
       return this.uniforms.uNoise;
     },
@@ -23046,7 +23658,7 @@ var fragment = "precision highp float;\n\nvarying vec2 vTextureCoord;\nvarying v
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NoiseFilter.prototype, "seed", {
+  Object.defineProperty(NoiseFilter2.prototype, "seed", {
     get: function() {
       return this.uniforms.uSeed;
     },
@@ -23056,8 +23668,8 @@ var fragment = "precision highp float;\n\nvarying vec2 vTextureCoord;\nvarying v
     enumerable: false,
     configurable: true
   });
-  return NoiseFilter;
-})(Filter);
+  return NoiseFilter2;
+}(Filter);
 var _tempMatrix = new Matrix();
 DisplayObject.prototype._cacheAsBitmap = false;
 DisplayObject.prototype._cacheData = null;
@@ -23205,7 +23817,7 @@ DisplayObject.prototype._initCachedDisplayObject = function _initCachedDisplayOb
   this._mask = null;
   this.filterArea = null;
   this.alpha = cacheAlpha;
-  var cachedSprite = new Sprite(renderTexture);
+  var cachedSprite = new Sprite$1(renderTexture);
   cachedSprite.transform.worldTransform = this.transform.worldTransform;
   cachedSprite.anchor.x = -(bounds.x / bounds.width);
   cachedSprite.anchor.y = -(bounds.y / bounds.height);
@@ -23261,7 +23873,7 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function _initCachedDis
   this._mask = null;
   this.filterArea = null;
   this.alpha = cacheAlpha;
-  var cachedSprite = new Sprite(renderTexture);
+  var cachedSprite = new Sprite$1(renderTexture);
   cachedSprite.transform.worldTransform = this.transform.worldTransform;
   cachedSprite.anchor.x = -(bounds.x / bounds.width);
   cachedSprite.anchor.y = -(bounds.y / bounds.height);
@@ -23655,9 +24267,9 @@ var RopeGeometry = function(_super) {
   };
   return RopeGeometry2;
 }(MeshGeometry);
-(function(_super) {
-  __extends$1(SimpleRope, _super);
-  function SimpleRope(texture, points, textureScale) {
+var SimpleRope = function(_super) {
+  __extends$1(SimpleRope2, _super);
+  function SimpleRope2(texture, points, textureScale) {
     if (textureScale === void 0) {
       textureScale = 0;
     }
@@ -23671,7 +24283,7 @@ var RopeGeometry = function(_super) {
     _this.autoUpdate = true;
     return _this;
   }
-  SimpleRope.prototype._render = function(renderer) {
+  SimpleRope2.prototype._render = function(renderer) {
     var geometry = this.geometry;
     if (this.autoUpdate || geometry._width !== this.shader.texture.height) {
       geometry._width = this.shader.texture.height;
@@ -23679,8 +24291,8 @@ var RopeGeometry = function(_super) {
     }
     _super.prototype._render.call(this, renderer);
   };
-  return SimpleRope;
-})(Mesh);
+  return SimpleRope2;
+}(Mesh);
 var SimplePlane = function(_super) {
   __extends$1(SimplePlane2, _super);
   function SimplePlane2(texture, verticesX, verticesY) {
@@ -23733,9 +24345,9 @@ var SimplePlane = function(_super) {
   };
   return SimplePlane2;
 }(Mesh);
-(function(_super) {
-  __extends$1(SimpleMesh, _super);
-  function SimpleMesh(texture, vertices, uvs, indices2, drawMode) {
+var SimpleMesh = function(_super) {
+  __extends$1(SimpleMesh2, _super);
+  function SimpleMesh2(texture, vertices, uvs, indices2, drawMode) {
     if (texture === void 0) {
       texture = Texture.EMPTY;
     }
@@ -23747,7 +24359,7 @@ var SimplePlane = function(_super) {
     _this.autoUpdate = true;
     return _this;
   }
-  Object.defineProperty(SimpleMesh.prototype, "vertices", {
+  Object.defineProperty(SimpleMesh2.prototype, "vertices", {
     get: function() {
       return this.geometry.getBuffer("aVertexPosition").data;
     },
@@ -23757,18 +24369,18 @@ var SimplePlane = function(_super) {
     enumerable: false,
     configurable: true
   });
-  SimpleMesh.prototype._render = function(renderer) {
+  SimpleMesh2.prototype._render = function(renderer) {
     if (this.autoUpdate) {
       this.geometry.getBuffer("aVertexPosition").update();
     }
     _super.prototype._render.call(this, renderer);
   };
-  return SimpleMesh;
-})(Mesh);
+  return SimpleMesh2;
+}(Mesh);
 var DEFAULT_BORDER_SIZE = 10;
-(function(_super) {
-  __extends$1(NineSlicePlane, _super);
-  function NineSlicePlane(texture, leftWidth, topHeight, rightWidth, bottomHeight) {
+var NineSlicePlane = function(_super) {
+  __extends$1(NineSlicePlane2, _super);
+  function NineSlicePlane2(texture, leftWidth, topHeight, rightWidth, bottomHeight) {
     if (leftWidth === void 0) {
       leftWidth = DEFAULT_BORDER_SIZE;
     }
@@ -23793,11 +24405,11 @@ var DEFAULT_BORDER_SIZE = 10;
     _this.texture = texture;
     return _this;
   }
-  NineSlicePlane.prototype.textureUpdated = function() {
+  NineSlicePlane2.prototype.textureUpdated = function() {
     this._textureID = this.shader.texture._updateID;
     this._refresh();
   };
-  Object.defineProperty(NineSlicePlane.prototype, "vertices", {
+  Object.defineProperty(NineSlicePlane2.prototype, "vertices", {
     get: function() {
       return this.geometry.getBuffer("aVertexPosition").data;
     },
@@ -23807,21 +24419,21 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  NineSlicePlane.prototype.updateHorizontalVertices = function() {
+  NineSlicePlane2.prototype.updateHorizontalVertices = function() {
     var vertices = this.vertices;
     var scale = this._getMinScale();
     vertices[9] = vertices[11] = vertices[13] = vertices[15] = this._topHeight * scale;
     vertices[17] = vertices[19] = vertices[21] = vertices[23] = this._height - this._bottomHeight * scale;
     vertices[25] = vertices[27] = vertices[29] = vertices[31] = this._height;
   };
-  NineSlicePlane.prototype.updateVerticalVertices = function() {
+  NineSlicePlane2.prototype.updateVerticalVertices = function() {
     var vertices = this.vertices;
     var scale = this._getMinScale();
     vertices[2] = vertices[10] = vertices[18] = vertices[26] = this._leftWidth * scale;
     vertices[4] = vertices[12] = vertices[20] = vertices[28] = this._width - this._rightWidth * scale;
     vertices[6] = vertices[14] = vertices[22] = vertices[30] = this._width;
   };
-  NineSlicePlane.prototype._getMinScale = function() {
+  NineSlicePlane2.prototype._getMinScale = function() {
     var w = this._leftWidth + this._rightWidth;
     var scaleW = this._width > w ? 1 : this._width / w;
     var h = this._topHeight + this._bottomHeight;
@@ -23829,7 +24441,7 @@ var DEFAULT_BORDER_SIZE = 10;
     var scale = Math.min(scaleW, scaleH);
     return scale;
   };
-  Object.defineProperty(NineSlicePlane.prototype, "width", {
+  Object.defineProperty(NineSlicePlane2.prototype, "width", {
     get: function() {
       return this._width;
     },
@@ -23840,7 +24452,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NineSlicePlane.prototype, "height", {
+  Object.defineProperty(NineSlicePlane2.prototype, "height", {
     get: function() {
       return this._height;
     },
@@ -23851,7 +24463,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NineSlicePlane.prototype, "leftWidth", {
+  Object.defineProperty(NineSlicePlane2.prototype, "leftWidth", {
     get: function() {
       return this._leftWidth;
     },
@@ -23862,7 +24474,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NineSlicePlane.prototype, "rightWidth", {
+  Object.defineProperty(NineSlicePlane2.prototype, "rightWidth", {
     get: function() {
       return this._rightWidth;
     },
@@ -23873,7 +24485,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NineSlicePlane.prototype, "topHeight", {
+  Object.defineProperty(NineSlicePlane2.prototype, "topHeight", {
     get: function() {
       return this._topHeight;
     },
@@ -23884,7 +24496,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(NineSlicePlane.prototype, "bottomHeight", {
+  Object.defineProperty(NineSlicePlane2.prototype, "bottomHeight", {
     get: function() {
       return this._bottomHeight;
     },
@@ -23895,7 +24507,7 @@ var DEFAULT_BORDER_SIZE = 10;
     enumerable: false,
     configurable: true
   });
-  NineSlicePlane.prototype._refresh = function() {
+  NineSlicePlane2.prototype._refresh = function() {
     var texture = this.texture;
     var uvs = this.geometry.buffers[1].data;
     this._origWidth = texture.orig.width;
@@ -23915,8 +24527,8 @@ var DEFAULT_BORDER_SIZE = 10;
     this.geometry.buffers[0].update();
     this.geometry.buffers[1].update();
   };
-  return NineSlicePlane;
-})(SimplePlane);
+  return NineSlicePlane2;
+}(SimplePlane);
 var extendStatics = function(d, b) {
   extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
     d2.__proto__ = b2;
@@ -23936,9 +24548,9 @@ function __extends(d, b) {
   }
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-(function(_super) {
-  __extends(AnimatedSprite, _super);
-  function AnimatedSprite(textures, autoUpdate) {
+var AnimatedSprite = function(_super) {
+  __extends(AnimatedSprite2, _super);
+  function AnimatedSprite2(textures, autoUpdate) {
     if (autoUpdate === void 0) {
       autoUpdate = true;
     }
@@ -23959,7 +24571,7 @@ function __extends(d, b) {
     _this.textures = textures;
     return _this;
   }
-  AnimatedSprite.prototype.stop = function() {
+  AnimatedSprite2.prototype.stop = function() {
     if (!this._playing) {
       return;
     }
@@ -23969,7 +24581,7 @@ function __extends(d, b) {
       this._isConnectedToTicker = false;
     }
   };
-  AnimatedSprite.prototype.play = function() {
+  AnimatedSprite2.prototype.play = function() {
     if (this._playing) {
       return;
     }
@@ -23979,7 +24591,7 @@ function __extends(d, b) {
       this._isConnectedToTicker = true;
     }
   };
-  AnimatedSprite.prototype.gotoAndStop = function(frameNumber) {
+  AnimatedSprite2.prototype.gotoAndStop = function(frameNumber) {
     this.stop();
     var previousFrame = this.currentFrame;
     this._currentTime = frameNumber;
@@ -23987,7 +24599,7 @@ function __extends(d, b) {
       this.updateTexture();
     }
   };
-  AnimatedSprite.prototype.gotoAndPlay = function(frameNumber) {
+  AnimatedSprite2.prototype.gotoAndPlay = function(frameNumber) {
     var previousFrame = this.currentFrame;
     this._currentTime = frameNumber;
     if (previousFrame !== this.currentFrame) {
@@ -23995,7 +24607,7 @@ function __extends(d, b) {
     }
     this.play();
   };
-  AnimatedSprite.prototype.update = function(deltaTime) {
+  AnimatedSprite2.prototype.update = function(deltaTime) {
     if (!this._playing) {
       return;
     }
@@ -24039,7 +24651,7 @@ function __extends(d, b) {
       this.updateTexture();
     }
   };
-  AnimatedSprite.prototype.updateTexture = function() {
+  AnimatedSprite2.prototype.updateTexture = function() {
     var currentFrame = this.currentFrame;
     if (this._previousFrame === currentFrame) {
       return;
@@ -24057,35 +24669,35 @@ function __extends(d, b) {
       this.onFrameChange(this.currentFrame);
     }
   };
-  AnimatedSprite.prototype.destroy = function(options) {
+  AnimatedSprite2.prototype.destroy = function(options) {
     this.stop();
     _super.prototype.destroy.call(this, options);
     this.onComplete = null;
     this.onFrameChange = null;
     this.onLoop = null;
   };
-  AnimatedSprite.fromFrames = function(frames) {
+  AnimatedSprite2.fromFrames = function(frames) {
     var textures = [];
     for (var i = 0; i < frames.length; ++i) {
       textures.push(Texture.from(frames[i]));
     }
-    return new AnimatedSprite(textures);
+    return new AnimatedSprite2(textures);
   };
-  AnimatedSprite.fromImages = function(images) {
+  AnimatedSprite2.fromImages = function(images) {
     var textures = [];
     for (var i = 0; i < images.length; ++i) {
       textures.push(Texture.from(images[i]));
     }
-    return new AnimatedSprite(textures);
+    return new AnimatedSprite2(textures);
   };
-  Object.defineProperty(AnimatedSprite.prototype, "totalFrames", {
+  Object.defineProperty(AnimatedSprite2.prototype, "totalFrames", {
     get: function() {
       return this._textures.length;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(AnimatedSprite.prototype, "textures", {
+  Object.defineProperty(AnimatedSprite2.prototype, "textures", {
     get: function() {
       return this._textures;
     },
@@ -24108,7 +24720,7 @@ function __extends(d, b) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(AnimatedSprite.prototype, "currentFrame", {
+  Object.defineProperty(AnimatedSprite2.prototype, "currentFrame", {
     get: function() {
       var currentFrame = Math.floor(this._currentTime) % this._textures.length;
       if (currentFrame < 0) {
@@ -24119,14 +24731,14 @@ function __extends(d, b) {
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(AnimatedSprite.prototype, "playing", {
+  Object.defineProperty(AnimatedSprite2.prototype, "playing", {
     get: function() {
       return this._playing;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(AnimatedSprite.prototype, "autoUpdate", {
+  Object.defineProperty(AnimatedSprite2.prototype, "autoUpdate", {
     get: function() {
       return this._autoUpdate;
     },
@@ -24145,8 +24757,8 @@ function __extends(d, b) {
     enumerable: false,
     configurable: true
   });
-  return AnimatedSprite;
-})(Sprite);
+  return AnimatedSprite2;
+}(Sprite$1);
 extensions.add(
   AccessibilityManager,
   Extract,
@@ -24163,6 +24775,269 @@ extensions.add(
   TickerPlugin,
   AppLoaderPlugin
 );
+var filters = {
+  AlphaFilter,
+  BlurFilter,
+  BlurFilterPass,
+  ColorMatrixFilter,
+  DisplacementFilter,
+  FXAAFilter,
+  NoiseFilter
+};
+const pixi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  utils,
+  filters,
+  AccessibilityManager,
+  accessibleTarget,
+  InteractionData,
+  InteractionEvent,
+  InteractionManager,
+  InteractionTrackingData,
+  interactiveTarget,
+  get ExtensionType() {
+    return ExtensionType;
+  },
+  extensions,
+  AbstractBatchRenderer,
+  AbstractMultiResource,
+  AbstractRenderer,
+  ArrayResource,
+  Attribute,
+  BaseImageResource,
+  BaseRenderTexture,
+  BaseTexture,
+  BatchDrawCall,
+  BatchGeometry,
+  BatchPluginFactory,
+  BatchRenderer,
+  BatchShaderGenerator,
+  BatchSystem,
+  BatchTextureArray,
+  Buffer: Buffer2,
+  BufferResource,
+  CanvasResource,
+  ContextSystem,
+  CubeResource,
+  Filter,
+  FilterState,
+  FilterSystem,
+  Framebuffer,
+  FramebufferSystem,
+  GLFramebuffer,
+  GLProgram,
+  GLTexture,
+  Geometry,
+  GeometrySystem,
+  IGLUniformData,
+  INSTALLED,
+  ImageBitmapResource,
+  ImageResource,
+  MaskData,
+  MaskSystem,
+  ObjectRenderer,
+  Program,
+  ProjectionSystem,
+  Quad,
+  QuadUv,
+  RenderTexture,
+  RenderTexturePool,
+  RenderTextureSystem,
+  Renderer,
+  Resource,
+  SVGResource,
+  ScissorSystem,
+  Shader,
+  ShaderSystem,
+  SpriteMaskFilter,
+  State,
+  StateSystem,
+  StencilSystem,
+  System,
+  Texture,
+  TextureGCSystem,
+  TextureMatrix,
+  TextureSystem,
+  TextureUvs,
+  UniformGroup,
+  VERSION,
+  VideoResource,
+  ViewableBuffer,
+  autoDetectRenderer,
+  autoDetectResource,
+  checkMaxIfStatementsInShader,
+  createUBOElements,
+  defaultFilterVertex,
+  defaultVertex: defaultVertex$1,
+  generateProgram,
+  generateUniformBufferSync,
+  getTestContext,
+  getUBOData,
+  resources,
+  systems,
+  uniformParsers,
+  Extract,
+  AppLoaderPlugin,
+  Loader,
+  get LoaderResource() {
+    return LoaderResource;
+  },
+  TextureLoader,
+  BlobResource,
+  CompressedTextureLoader,
+  CompressedTextureResource,
+  DDSLoader,
+  FORMATS_TO_COMPONENTS,
+  get INTERNAL_FORMATS() {
+    return INTERNAL_FORMATS;
+  },
+  INTERNAL_FORMAT_TO_BYTES_PER_PIXEL,
+  KTXLoader,
+  TYPES_TO_BYTES_PER_COMPONENT,
+  TYPES_TO_BYTES_PER_PIXEL,
+  parseDDS,
+  parseKTX,
+  ParticleContainer,
+  ParticleRenderer,
+  BasePrepare,
+  CountLimiter,
+  Prepare,
+  TimeLimiter,
+  Spritesheet,
+  SpritesheetLoader,
+  TilingSprite,
+  TilingSpriteRenderer,
+  BitmapFont,
+  BitmapFontData,
+  BitmapFontLoader,
+  BitmapText,
+  TextFormat,
+  XMLFormat,
+  XMLStringFormat,
+  autoDetectFormat,
+  Ticker,
+  TickerPlugin,
+  get UPDATE_PRIORITY() {
+    return UPDATE_PRIORITY;
+  },
+  Application,
+  ResizePlugin,
+  get ALPHA_MODES() {
+    return ALPHA_MODES;
+  },
+  get BLEND_MODES() {
+    return BLEND_MODES;
+  },
+  get BUFFER_BITS() {
+    return BUFFER_BITS;
+  },
+  get BUFFER_TYPE() {
+    return BUFFER_TYPE;
+  },
+  get CLEAR_MODES() {
+    return CLEAR_MODES;
+  },
+  get COLOR_MASK_BITS() {
+    return COLOR_MASK_BITS;
+  },
+  get DRAW_MODES() {
+    return DRAW_MODES;
+  },
+  get ENV() {
+    return ENV;
+  },
+  get FORMATS() {
+    return FORMATS;
+  },
+  get GC_MODES() {
+    return GC_MODES;
+  },
+  get MASK_TYPES() {
+    return MASK_TYPES;
+  },
+  get MIPMAP_MODES() {
+    return MIPMAP_MODES;
+  },
+  get MSAA_QUALITY() {
+    return MSAA_QUALITY;
+  },
+  get PRECISION() {
+    return PRECISION;
+  },
+  get RENDERER_TYPE() {
+    return RENDERER_TYPE;
+  },
+  get SAMPLER_TYPES() {
+    return SAMPLER_TYPES;
+  },
+  get SCALE_MODES() {
+    return SCALE_MODES;
+  },
+  get TARGETS() {
+    return TARGETS;
+  },
+  get TYPES() {
+    return TYPES;
+  },
+  get WRAP_MODES() {
+    return WRAP_MODES;
+  },
+  Bounds,
+  Container,
+  DisplayObject,
+  TemporaryDisplayObject,
+  FillStyle,
+  GRAPHICS_CURVES,
+  Graphics,
+  GraphicsData,
+  GraphicsGeometry,
+  get LINE_CAP() {
+    return LINE_CAP;
+  },
+  get LINE_JOIN() {
+    return LINE_JOIN;
+  },
+  LineStyle,
+  graphicsUtils,
+  Circle,
+  DEG_TO_RAD,
+  Ellipse,
+  Matrix,
+  ObservablePoint,
+  PI_2,
+  Point,
+  Polygon: Polygon$1,
+  RAD_TO_DEG,
+  Rectangle,
+  RoundedRectangle,
+  get SHAPES() {
+    return SHAPES;
+  },
+  Transform,
+  groupD8,
+  Mesh,
+  MeshBatchUvs,
+  MeshGeometry,
+  MeshMaterial,
+  NineSlicePlane,
+  PlaneGeometry,
+  RopeGeometry,
+  SimpleMesh,
+  SimplePlane,
+  SimpleRope,
+  Runner,
+  Sprite: Sprite$1,
+  AnimatedSprite,
+  get TEXT_GRADIENT() {
+    return TEXT_GRADIENT;
+  },
+  Text: Text$1,
+  TextMetrics,
+  TextStyle,
+  BrowserAdapter,
+  isMobile,
+  settings
+}, Symbol.toStringTag, { value: "Module" }));
 class PixiEngine {
   constructor(id = "bilza", width = 600, height = 300, backgroundColor = 13882323) {
     __publicField(this, "app");
@@ -24201,6 +25076,18 @@ class PixiEngine {
   }
   totalComps() {
     return this.app.stage.children.length;
+  }
+  canvasWidth() {
+    return this.app.renderer.width;
+  }
+  canvasHeight() {
+    return this.app.renderer.height;
+  }
+  stageWidth() {
+    return this.app.stage.width;
+  }
+  stageHeight() {
+    return this.app.stage.height;
   }
 }
 function resizeCanvas(app) {
@@ -27052,14 +27939,27 @@ const dat_gui_module = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defi
   GUI: GUI$1,
   default: index
 }, Symbol.toStringTag, { value: "Module" }));
+class BoxCompSprite extends BoxComp {
+  constructor(texture) {
+    const pObj = new Sprite$1(texture);
+    super(pObj);
+  }
+}
+class Sprite extends BoxCompSprite {
+  constructor(texture) {
+    super(texture);
+  }
+}
 export {
   Rect$1 as Circle,
   Rect3 as Ellipse,
   Line,
+  pixi as Pixi,
   PixiEngine,
   Polygon,
   Rect$2 as Rect,
   RoundRect,
+  Sprite,
   Text,
   dat_gui_module as dat
 };
