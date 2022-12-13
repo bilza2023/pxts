@@ -1,7 +1,7 @@
-import { PixiEngine,dat,Rect,Pixi } from "./index.js";
+import { PixiEngine,dat,Rect,Pixi } from "../pxts.js";
 
 ////////////////////////////////////////////////
-const engine = new PixiEngine("bilza", 1000, 500, 0xb5af6c);
+const engine = new PixiEngine("bilza", 1000, 400, 0xb5af6c);
 
 //  Create a static rectangle for reference
 const bgRect = new Rect(100, 100);
